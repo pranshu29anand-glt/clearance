@@ -1,0 +1,440 @@
+<title>Clearance</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a control-tower clearance desk. Header with Zulu clock, a request strip, then flight-strip style reports. */
+:root{
+  --bg:#eef1f4; --panel:#ffffff; --ink:#14202b; --muted:#5a6773; --line:#cfd6dd; --strip:#f7f9fb;
+  --accent:#1f5fbf; --go:#1b7f4b; --hold:#b26a00; --stop:#b3261e;
+  --go-bg:#e3f3ea; --hold-bg:#fbf0dc; --stop-bg:#fbe4e2; --accent-bg:#e4edfa;
+  --f-display:"IBM Plex Sans Condensed","Arial Narrow",sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f161d; --panel:#16202a; --ink:#e6edf3; --muted:#9aa7b3; --line:#2b3946; --strip:#1b2733;
+  --accent:#7fb0ff; --go:#5fd19a; --hold:#f2b45a; --stop:#ff8a80;
+  --go-bg:#16342a; --hold-bg:#3a2c14; --stop-bg:#3d1d1b; --accent-bg:#1c2c44; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f161d; --panel:#16202a; --ink:#e6edf3; --muted:#9aa7b3; --line:#2b3946; --strip:#1b2733;
+  --accent:#7fb0ff; --go:#5fd19a; --hold:#f2b45a; --stop:#ff8a80;
+  --go-bg:#16342a; --hold-bg:#3a2c14; --stop-bg:#3d1d1b; --accent-bg:#1c2c44; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:12px}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand h1{font-family:var(--f-display);font-weight:700;font-size:34px;letter-spacing:.04em;margin:0;text-transform:uppercase}
+.brand span{color:var(--muted);font-size:14px}
+.clock{font-family:var(--f-mono);font-size:13px;color:var(--muted);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.clock b{color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums}
+.clock nav{display:flex;gap:12px}
+.lead{font-size:18px;max-width:62ch;margin:0;text-wrap:balance}
+.lead small{display:block;color:var(--muted);font-size:14px;margin-top:6px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px}
+.label{font-family:var(--f-display);font-weight:600;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+form.req{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) auto;gap:14px;align-items:end}
+@media (max-width:760px){form.req{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+input[type=text]{font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--strip);color:var(--ink);width:100%}
+.seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg label{flex:1;text-align:center;padding:9px 6px;cursor:pointer;font-size:14px;border-left:1px solid var(--line);background:var(--strip)}
+.seg label:first-child{border-left:0}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg input:checked+span{font-weight:600}
+.seg label:has(input:checked){background:var(--accent-bg);color:var(--ink);box-shadow:inset 0 -2px 0 var(--accent)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:-2px}
+button{font:inherit;font-weight:600;cursor:pointer;border-radius:4px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);padding:10px 16px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--line);font-weight:500}
+button:disabled{opacity:.5;cursor:default}
+.hint{color:var(--muted);font-size:13px;margin:10px 0 0}
+.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.tile{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:6px;padding:12px;border:1px solid var(--line);border-radius:4px;background:var(--panel);border-left:6px solid var(--muted)}
+.tile:focus-visible{outline:2px solid var(--accent)}
+.tile strong{font-family:var(--f-display);font-size:18px;letter-spacing:.02em}
+.tile em{font-style:normal;color:var(--muted);font-size:13px}
+.tile.sel{box-shadow:0 0 0 2px var(--accent)}
+.tile .chip{white-space:normal;align-self:flex-start}
+.t-green{border-left-color:var(--go)} .t-amber{border-left-color:var(--hold)} .t-red{border-left-color:var(--stop)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:12px;padding:2px 8px;border-radius:3px;white-space:nowrap}
+.c-green{background:var(--go-bg);color:var(--go)} .c-amber{background:var(--hold-bg);color:var(--hold)} .c-red{background:var(--stop-bg);color:var(--stop)}
+/* The report = a clearance strip */
+.strip{background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.strip-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:0;border-bottom:1px solid var(--line)}
+@media (max-width:640px){.strip-head{grid-template-columns:1fr}}
+.verdict{padding:16px 20px;font-family:var(--f-display);font-weight:700;font-size:26px;letter-spacing:.06em;text-transform:uppercase;display:flex;flex-direction:column;justify-content:center;min-width:180px}
+.verdict small{font-family:var(--f-mono);font-weight:400;font-size:12px;letter-spacing:0;text-transform:none}
+.v-green{background:var(--go-bg);color:var(--go)} .v-amber{background:var(--hold-bg);color:var(--hold)} .v-red{background:var(--stop-bg);color:var(--stop)}
+.ident{padding:16px 20px;min-width:0}
+.ident h2{margin:0;font-family:var(--f-display);font-size:28px;letter-spacing:.02em}
+.ident p{margin:4px 0 0;color:var(--muted)}
+.times{display:grid;grid-template-columns:1fr 1fr;border-left:1px solid var(--line)}
+@media (max-width:640px){.times{border-left:0;border-top:1px solid var(--line)}}
+.times div{padding:14px 18px;border-left:1px solid var(--line);min-width:130px}
+.times div:first-child{border-left:0}
+.times b{display:block;font-family:var(--f-mono);font-size:17px;font-weight:500;font-variant-numeric:tabular-nums}
+.strip-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}
+@media (max-width:760px){.strip-body{grid-template-columns:1fr}}
+.sec{padding:16px 20px;border-top:1px solid var(--line);min-width:0}
+.sec:nth-child(odd){border-right:1px solid var(--line)}
+@media (max-width:760px){.sec:nth-child(odd){border-right:0}}
+.sec.full{grid-column:1/-1;border-right:0}
+.sec h3{margin:0 0 10px;font-family:var(--f-display);font-weight:600;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.gauges{width:100%;border-collapse:collapse;font-size:14px}
+.gauges td{padding:8px 6px;border-top:1px solid var(--line);vertical-align:top}
+.gauges tr:first-child td{border-top:0}
+.gauges td:first-child{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap;width:1%}
+.gauges .val{font-weight:600}
+.gauges .note{color:var(--muted);font-size:13px}
+ul.clean{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+ul.clean li{display:flex;gap:8px;align-items:flex-start}
+ol.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:8px}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:28px 74px minmax(0,1fr);gap:8px;align-items:start;padding:8px 0;border-top:1px dashed var(--line)}
+ol.steps li:first-child{border-top:0}
+ol.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--f-mono);color:var(--muted);font-size:13px;padding-top:2px}
+.who{font-family:var(--f-mono);font-size:11px;padding:3px 6px;border-radius:3px;text-align:center;text-transform:uppercase;letter-spacing:.04em}
+.who.agent{background:var(--accent-bg);color:var(--accent)} .who.you{background:var(--strip);color:var(--ink);border:1px solid var(--line)}
+.ev{display:inline-block;font-family:var(--f-mono);font-size:10.5px;font-weight:500;padding:1px 5px;border-radius:3px;border:1px solid currentColor;margin-left:4px;vertical-align:1px;text-decoration:none;white-space:nowrap}
+.ev.S{color:var(--go)} .ev.U{color:var(--hold)} .ev.T{color:var(--accent)}
+.foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding:12px 20px;border-top:1px solid var(--line);background:var(--strip);font-size:13px;color:var(--muted)}
+.foot .acts{display:flex;gap:8px;flex-wrap:wrap}
+.foot button{padding:6px 12px;font-size:13px}
+.progress{font-family:var(--f-mono);font-size:13px;display:flex;flex-direction:column;gap:4px}
+.progress .on{color:var(--ink)} .progress .off{color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted)}
+.notice{border-left:4px solid var(--hold);background:var(--hold-bg);padding:10px 14px;border-radius:3px;font-size:14px}
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;font-size:14px}
+@media (max-width:760px){.how{grid-template-columns:1fr}}
+.how h4{margin:0 0 6px;font-family:var(--f-display);font-size:16px}
+.how p{margin:0;color:var(--muted)}
+footer{color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.blink{animation:bl 1s steps(2) infinite}@keyframes bl{50%{opacity:.3}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand"><h1>Clearance</h1><span>Will this app block your launch?</span></div>
+    <div class="clock">
+      <span>UTC <b id="utc">--:--:--</b></span><span>IST <b id="ist">--:--:--</b></span>
+      <nav><a href="#how">How we score</a><a id="prd-link" href="https://github.com/" target="_blank" rel="noopener">PRD</a><a id="repo-link" href="https://github.com/" target="_blank" rel="noopener">Repo</a></nav>
+    </div>
+  </header>
+
+  <p class="lead">Before your AI agent can connect to someone's Slack or Gmail, you need your own OAuth app with that provider, and some providers make you wait weeks. Clearance tells you how long it will take, what will block you, and which steps an agent can do for you.
+    <small>Pick an app, say what your agent will do and who will use it. The answer changes with both.</small></p>
+
+  <section class="panel" aria-label="Request clearance">
+    <form class="req" id="req">
+      <div class="field"><label class="label" for="app">App name or website</label>
+        <input type="text" id="app" placeholder="e.g. Gmail, razorpay.com, Zoom" autocomplete="off"></div>
+      <div class="field"><span class="label" id="l-int">Your agent will</span>
+        <div class="seg" role="radiogroup" aria-labelledby="l-int">
+          <label><input type="radio" name="intent" id="i-read" value="read" checked><span>Read</span></label>
+          <label><input type="radio" name="intent" id="i-write" value="write"><span>Write</span></label>
+          <label><input type="radio" name="intent" id="i-act" value="act"><span>Act / admin</span></label>
+        </div></div>
+      <div class="field"><span class="label" id="l-aud">Used by</span>
+        <div class="seg" role="radiogroup" aria-labelledby="l-aud">
+          <label><input type="radio" name="aud" id="a-team" value="team"><span>My team</span></label>
+          <label><input type="radio" name="aud" id="a-public" value="public" checked><span>Public</span></label>
+        </div></div>
+      <button type="submit" id="go">Check clearance</button>
+    </form>
+    <p class="hint">Read = fetch data (emails, messages, files). Write = create or send (post, send email). Act / admin = manage accounts, ads, payments or business data. My team = only people inside your own company account.</p>
+  </section>
+
+  <section aria-label="Verified library">
+    <div class="label" style="margin-bottom:8px">Verified library · checked 29 Oct 2026</div>
+    <div class="board" id="board"></div>
+  </section>
+
+  <section id="out" aria-live="polite"></section>
+
+  <section class="panel" id="how">
+    <div class="label" style="margin-bottom:12px">How we score</div>
+    <div class="how">
+      <div><h4>The verdict</h4><p>Set by the worst of two gauges: who can get access, and what review applies. <b style="color:var(--go)">Cleared</b> = self-serve, no wait. <b style="color:var(--hold)">Hold</b> = a review of days or an unpublished wait. <b style="color:var(--stop)">Gated</b> = weeks, a partner programme, or a paid audit.</p></div>
+      <div><h4>The layers</h4><p>0 What is this app. 1 Category. 2 What you want to do, and for whom. 3 Have we verified it. 4 Seven gauges: access, review, permission level, prerequisites, limits before approval, ongoing duties, agent vs you. 5 The verdict and next action.</p></div>
+      <div><h4>The evidence</h4><p><span class="ev S">SOURCED</span> we opened the official doc. <span class="ev T">TESTED</span> an agent tried it. <span class="ev U">UNVERIFIED</span> inferred or from third parties; check before you plan on it. Live reports start unverified.</p></div>
+    </div>
+  </section>
+
+  <footer><span>Clearance v1 · a take-home for Composio · built by <a href="https://app.notion.com/p/32244e320dfe81a69501d3aee6859b52" target="_blank" rel="noopener">Pranshu Anand</a></span><span>Not affiliated with Composio or any provider. Rules change; check the sources.</span></footer>
+</div>
+
+<script>
+const LINKS={prd:"https://app.notion.com/p/40844e320dfe8191a6dace4b2516465c",repo:"https://github.com/pranshu29anand-glt/clearance"};
+document.getElementById('prd-link').href=LINKS.prd;document.getElementById('repo-link').href=LINKS.repo;
+function tick(){const d=new Date();const f=(z)=>d.toLocaleTimeString('en-GB',{timeZone:z,hour12:false});
+  document.getElementById('utc').textContent=f('UTC');document.getElementById('ist').textContent=f('Asia/Kolkata');}
+tick();setInterval(tick,1000);
+
+const SRC={
+  gfaq:{t:"Google OAuth verification FAQ",u:"https://support.google.com/cloud/answer/13463817"},
+  grest:{t:"Google restricted scope verification",u:"https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"},
+  gscopes:{t:"Gmail API scopes",u:"https://developers.google.com/workspace/gmail/api/auth/scopes"},
+  slrate:{t:"Slack changelog, 29 May 2025: rate limits for non-Marketplace apps",u:"https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps"},
+  sldist:{t:"Slack app distribution",u:"https://docs.slack.dev/app-management/distribution"},
+  gh:{t:"GitHub: Creating an OAuth app",u:"https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"},
+  li:{t:"LinkedIn: Getting access to LinkedIn APIs",u:"https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access"},
+  lishare:{t:"LinkedIn: Share on LinkedIn",u:"https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/share-on-linkedin"},
+  no:{t:"Notion: Authorization",u:"https://developers.notion.com/docs/authorization"},
+  cmp:{t:"Composio: Managed vs custom auth",u:"https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app"},
+  cmpdir:{t:"Composio managed OAuth directory",u:"https://docs.composio.dev/toolkits/managed-auth"}
+};
+const g=(key,value,ev,note,src)=>({key,value,ev,note,src});
+const COMPOSIO_STEP={who:"agent",text:"Create a custom auth config in Composio, paste the Client ID and secret, and pass its ID in your session.",ev:"S",src:"cmp"};
+
+const LIB=[
+ {id:"github",name:"GitHub",category:"Dev tools",overview:"Code hosting. OAuth apps act on behalf of a user; GitHub recommends GitHub Apps for finer permissions.",
+  managed:{v:"Yes, Composio names GitHub as managed",ev:"S",src:"cmp"},portal:"https://github.com/settings/developers",
+  paths:[{when:{},tier:"green",work:"10 to 20 min",wait:"None",why:"Self-serve registration. GitHub's docs describe no review step.",
+   gauges:[g("G1 Access","Open","S","Any GitHub user or org can register an OAuth app (up to 100 per owner).","gh"),
+    g("G2 Review","None found","S","The docs describe no approval step.","gh"),
+    g("G3 Permissions","Depends on scopes","U","Broad scopes like repo give full repository access; ask for the least you need."),
+    g("G4 You need","Homepage URL, callback URL","S","Up to 10 callback URLs allowed.","gh"),
+    g("G5 Before approval","No known limits","U","Standard API rate limits apply."),
+    g("G6 Ongoing","Token expiry on by default","S","\"Expire user access tokens\" is enabled by default.","gh")],
+   blockers:[{text:"Callback URL must match exactly, including https and trailing path. Use the redirect URI Composio shows you.",ev:"S",src:"cmp"},
+    {text:"For org-wide or fine-grained repo access, a GitHub App may fit better than an OAuth app.",ev:"S",src:"gh"}],
+   steps:[{who:"agent",text:"Prepare the form values: app name, homepage, Composio's redirect URI as the callback.",ev:"S",src:"gh"},
+    {who:"you",text:"Sign in to GitHub, open Settings, Developer settings, OAuth apps, New OAuth App, and register.",ev:"S",src:"gh"},
+    {who:"you",text:"Generate a client secret and copy it with the Client ID. Store it in a secrets manager, never in code.",ev:"U"},
+    COMPOSIO_STEP],
+   wait_tip:"No wait. You can go live the same day."}]},
+
+ {id:"slack",name:"Slack",category:"Productivity / chat",overview:"Team messaging. Apps can stay in one workspace, be distributed by link (unlisted), or be listed in the Slack Marketplace after review.",
+  managed:{v:"Yes, Composio names Slack as managed",ev:"S",src:"cmp"},portal:"https://api.slack.com/apps",
+  paths:[
+   {when:{aud:["team"]},tier:"green",work:"15 to 30 min",wait:"None",why:"An internal app in your own workspace needs no review, and Slack's 2025 throttling does not apply to internal apps.",
+    gauges:[g("G1 Access","Open","S","Any workspace member allowed to create apps.","sldist"),g("G2 Review","None","S","Undistributed apps are not reviewed.","sldist"),
+     g("G3 Permissions","Bot scopes you choose","U","Admins may need to approve the install."),g("G4 You need","A workspace where you can install apps","U"),
+     g("G5 Before approval","No throttle for internal apps","S","Internal customer-built apps are exempt from the 2025 limits.","slrate"),g("G6 Ongoing","App removed if its creator leaves the workspace (most scopes)","S","Add collaborators so it survives staff changes.","sldist")],
+    blockers:[{text:"Your workspace admin may require approval before installing any app.",ev:"S",src:"sldist"}],
+    steps:[{who:"agent",text:"Draft the app manifest: name, scopes, redirect URL.",ev:"U"},{who:"you",text:"Sign in at api.slack.com/apps, create the app from the manifest, install it to your workspace.",ev:"U"},COMPOSIO_STEP],
+    wait_tip:"No wait."},
+   {when:{aud:["public"],intent:["read"]},tier:"amber",work:"1 to 2 h",wait:"Not published",why:"Reading message history from an unlisted app is throttled to 1 request a minute, so in practice you need a Marketplace listing, and Slack does not publish how long that review takes.",
+    gauges:[g("G1 Access","Open to create","S","Distribution needs OAuth and HTTPS on all URLs.","sldist"),
+     g("G2 Review","Marketplace review (manual)","S","Listed apps are reviewed against Slack's guidelines, including a scope review.","slrate"),
+     g("G3 Permissions","History scopes are the throttled ones","S","conversations.history and conversations.replies.","slrate"),
+     g("G4 You need","HTTPS redirect URL, onboarding flow, minimal scopes","S","","sldist"),
+     g("G5 Before approval","1 request/min and 15 messages per call","S","Applies to new unlisted apps and new installs since 29 May 2025.","slrate"),
+     g("G6 Ongoing","Keep the listing compliant","U")],
+    blockers:[{text:"An agent that reads channel history will be nearly unusable until the app is in the Marketplace.",ev:"S",src:"slrate"},
+     {text:"Some workspaces allow only Marketplace apps, so an unlisted app can't even be installed there.",ev:"S",src:"sldist"},
+     {text:"Review time is not published. Plan for weeks, not days.",ev:"U"}],
+    steps:[{who:"agent",text:"Draft the manifest with the fewest scopes, and write the scope justifications for review.",ev:"U"},
+     {who:"you",text:"Create the app, activate public distribution, and check the distribution checklist.",ev:"S",src:"sldist"},
+     {who:"you",text:"Submit the Marketplace listing: description, privacy policy, support contact.",ev:"U"},
+     {who:"agent",text:"Draft listing copy and the privacy policy outline for your legal review.",ev:"U"},COMPOSIO_STEP],
+    wait_tip:"While you wait, use Composio's managed Slack app so users can connect today."},
+   {when:{aud:["public"]},tier:"green",work:"30 to 60 min",wait:"None for unlisted",why:"Posting and acting are not throttled by the 2025 change, so an unlisted distributed app works without review.",
+    gauges:[g("G1 Access","Open","S","","sldist"),g("G2 Review","None for unlisted; optional Marketplace","S","","sldist"),
+     g("G3 Permissions","Write scopes such as chat:write","U"),g("G4 You need","HTTPS on redirect, events and interactivity URLs","S","","sldist"),
+     g("G5 Before approval","Only history reads are throttled","S","","slrate"),g("G6 Ongoing","None known","U")],
+    blockers:[{text:"Workspaces that allow only Marketplace apps will block your install.",ev:"S",src:"sldist"},{text:"If you later add history-read scopes, the 1 request/min throttle hits.",ev:"S",src:"slrate"}],
+    steps:[{who:"agent",text:"Draft the manifest and the Add to Slack button.",ev:"U"},{who:"you",text:"Create the app and activate public distribution.",ev:"S",src:"sldist"},COMPOSIO_STEP],
+    wait_tip:"No wait unless you list in the Marketplace."}
+  ]},
+
+ {id:"gmail",name:"Gmail",category:"Email (Google)",overview:"Google's email. Every Gmail scope is rated non-sensitive, sensitive or restricted, and the rating sets the review.",
+  managed:{v:"Yes, Composio names Gmail as managed",ev:"S",src:"cmp"},portal:"https://console.cloud.google.com/auth/overview",
+  paths:[
+   {when:{aud:["team"]},tier:"green",work:"30 to 60 min",wait:"None",why:"Apps used only inside your own Google Workspace organisation, set to Internal, are exempt from verification.",
+    gauges:[g("G1 Access","Open","S","","grest"),g("G2 Review","Exempt (internal use)","S","Only if all users are in your Workspace org.","grest"),
+     g("G3 Permissions","Any, no review triggered","S","","grest"),g("G4 You need","A Google Workspace org (not a personal Gmail)","S","","grest"),
+     g("G5 Before approval","None for internal apps","U"),g("G6 Ongoing","None known","U")],
+    blockers:[{text:"Personal @gmail.com accounts can't use Internal. You'd be in External testing mode instead.",ev:"U"}],
+    steps:[{who:"you",text:"Sign in to Google Cloud console, create a project, enable the Gmail API.",ev:"T",note:"An agent probe of the console was redirected to Google sign-in, so this step needs you."},
+     {who:"you",text:"Set the OAuth consent screen user type to Internal.",ev:"S",src:"grest"},
+     {who:"you",text:"Create OAuth client credentials (Web application) with Composio's redirect URI.",ev:"U"},COMPOSIO_STEP],
+    wait_tip:"No wait."},
+   {when:{aud:["public"],intent:["write"]},tier:"amber",work:"3 to 6 h",wait:"About 2 to 3 weeks",why:"Send-only uses gmail.send, a sensitive scope. Google estimates 10 business days for sensitive scope review, plus 2 to 3 business days for brand verification.",
+    gauges:[g("G1 Access","Open","S","","gfaq"),g("G2 Review","Sensitive scope verification (manual)","S","Estimate: 10 business days. Not guaranteed.","gfaq"),
+     g("G3 Permissions","Sensitive (gmail.send)","S","Use gmail.send, not the restricted full-mail scope, if you only send.","gfaq"),
+     g("G4 You need","Verified domain, homepage, privacy policy, scope justification","U","Google may also ask for a demo video."),
+     g("G5 Before approval","100 new users, ever","S","The cap is for the project's lifetime and can't be reset.","gfaq"),
+     g("G6 Ongoing","Re-verify after some config changes","S","","gfaq")],
+    blockers:[{text:"Asking for more than gmail.send (e.g. full mail access) moves you to the restricted path: about 6 weeks plus a security assessment.",ev:"S",src:"gfaq"},
+     {text:"The 100-user cap is lifetime. Don't burn it on test accounts.",ev:"S",src:"gfaq"}],
+    steps:[{who:"you",text:"Create the Google Cloud project and OAuth client (needs your Google login).",ev:"T",note:"Agent probe redirected to Google sign-in."},
+     {who:"agent",text:"Draft the scope justification and a checklist of what your homepage and privacy policy must say.",ev:"U"},
+     {who:"you",text:"Verify your domain, publish the privacy policy, record the demo video if asked.",ev:"U"},
+     {who:"you",text:"Submit for verification and answer Google's emails promptly.",ev:"S",src:"gfaq"},COMPOSIO_STEP],
+    wait_tip:"While you wait, use Composio's managed Gmail app; users see \"Composio\" on the consent screen."},
+   {when:{aud:["public"]},tier:"red",work:"1 to 3 days",wait:"About 6 weeks or more",why:"Reading or managing mail needs restricted scopes. Google estimates 6 weeks for restricted review, and apps that handle the data on servers need a third-party security assessment.",
+    gauges:[g("G1 Access","Open","S","","gfaq"),g("G2 Review","Restricted verification + security assessment","S","Done by a Google-empanelled assessor under CASA.","grest"),
+     g("G3 Permissions","Restricted (reading or modifying mail)","U","gmail.readonly and gmail.modify are restricted per Google's scope list; confirm before planning.","gscopes"),
+     g("G4 You need","Everything for sensitive, plus a passed assessment","S","","grest"),
+     g("G5 Before approval","100 new users, ever","S","","gfaq"),
+     g("G6 Ongoing","Reassessment every 12 months","S","From the assessor's Letter of Assessment date.","grest")],
+    blockers:[{text:"The security assessment has a cost, agreed between you and the assessor. Google charges nothing.",ev:"S",src:"gfaq"},
+     {text:"Restricted review can take several weeks, and the yearly reassessment repeats the cost.",ev:"S",src:"grest"},
+     {text:"If you only need to send, drop to gmail.send and take the 2 to 3 week path instead.",ev:"S",src:"gfaq"}],
+    steps:[{who:"you",text:"Create the Google Cloud project and OAuth client.",ev:"T",note:"Agent probe redirected to Google sign-in."},
+     {who:"agent",text:"Map each feature to the narrowest scope; flag any that could use a sensitive scope instead.",ev:"U"},
+     {who:"you",text:"Pick an empanelled assessor and budget for the assessment.",ev:"S",src:"grest"},
+     {who:"you",text:"Submit for verification, then complete the assessment.",ev:"S",src:"grest"},COMPOSIO_STEP],
+    wait_tip:"Launch on Composio's managed Gmail app now, and run verification in parallel."}
+  ]},
+
+ {id:"linkedin",name:"LinkedIn",category:"Social",overview:"Professional network. Only sign-in and posting as a member are open; most business APIs need a partner programme.",
+  managed:{v:"Check the directory",ev:"U",src:"cmpdir"},portal:"https://www.linkedin.com/developers/apps",
+  paths:[
+   {when:{intent:["act"]},tier:"red",work:"Days of paperwork",wait:"Not published; approval not guaranteed",why:"Ads, Sales Navigator and recruiting APIs need explicit partner approval from LinkedIn. Compliance APIs are closed.",
+    gauges:[g("G1 Access","Partner programme","S","Marketing, Sales (SNAP) and Talent each have their own application.","li"),
+     g("G2 Review","Manual partner review","S","","li"),g("G3 Permissions","Business data","S","","li"),
+     g("G4 You need","A LinkedIn Company Page linked to the app","U","Third-party guides say a Page admin must verify the link."),
+     g("G5 Before approval","No access at all","S","","li"),g("G6 Ongoing","Partner terms","U")],
+    blockers:[{text:"Approval is at LinkedIn's discretion. Have a plan B for this feature.",ev:"U"},{text:"Compliance permissions are closed and can't be requested.",ev:"S",src:"li"}],
+    steps:[{who:"you",text:"Create the app in the developer portal and link your Company Page.",ev:"U"},
+     {who:"you",text:"Apply for the relevant product (Advertising API, SNAP, Talent).",ev:"S",src:"li"},
+     {who:"agent",text:"Draft the use-case description for the application.",ev:"U"},COMPOSIO_STEP],
+    wait_tip:"Ship without this feature first; it may never be approved."},
+   {when:{},tier:"green",work:"20 to 40 min",wait:"None",why:"Sign in (profile, email) and Share on LinkedIn (post as the member) are open self-serve products.",
+    gauges:[g("G1 Access","Open products","S","Sign in with LinkedIn (OpenID Connect), Share on LinkedIn.","li"),
+     g("G2 Review","None for open products","S","Added from the Products tab.","li"),
+     g("G3 Permissions","profile, email, w_member_social","S","","li"),
+     g("G4 You need","A LinkedIn Company Page linked to the app","U","Third-party guides say a Page admin must verify the link."),
+     g("G5 Before approval","150 posts/day per member","S","Application limit 100,000 a day.","lishare"),
+     g("G6 Ongoing","None known","U")],
+    blockers:[{text:"Reading a member's connections, feed or company data is not in the open products.",ev:"S",src:"li"},{text:"No Company Page or admin to approve the link means no app.",ev:"U"}],
+    steps:[{who:"you",text:"Create the app and pick your Company Page.",ev:"U"},{who:"you",text:"Ask your Page admin to approve the verification link.",ev:"U"},
+     {who:"you",text:"Add Sign in with LinkedIn and Share on LinkedIn on the Products tab.",ev:"S",src:"li"},COMPOSIO_STEP],
+    wait_tip:"No wait, beyond the Page admin approving."}
+  ]},
+
+ {id:"notion",name:"Notion",category:"Productivity / docs",overview:"Docs and wikis. Internal connections use a token for one workspace; public connections use OAuth and go through review.",
+  managed:{v:"Check the directory",ev:"U",src:"cmpdir"},portal:"https://www.notion.so/profile/integrations",
+  paths:[
+   {when:{aud:["team"]},tier:"green",work:"10 min",wait:"None",why:"For your own workspace, an internal connection with a token is enough. No OAuth app needed.",
+    gauges:[g("G1 Access","Open","S","Workspace owner creates it.","no"),g("G2 Review","None","S","","no"),g("G3 Permissions","Pages you share with it","U"),
+     g("G4 You need","Workspace owner rights","S","","no"),g("G5 Before approval","None","U"),g("G6 Ongoing","Rotate the token if exposed","U")],
+    blockers:[{text:"The connection only sees pages someone explicitly shares with it.",ev:"U"}],
+    steps:[{who:"you",text:"Create an internal connection in Notion's developer portal and copy the token.",ev:"S",src:"no"},{who:"agent",text:"Store it as an API-key auth config in Composio.",ev:"U"}],
+    wait_tip:"No wait."},
+   {when:{},tier:"amber",work:"1 to 2 h",wait:"Not published",why:"Public connections are submitted for review before you get an authorization URL. Notion does not publish how long that takes.",
+    gauges:[g("G1 Access","Open to create","S","","no"),g("G2 Review","Required for public connections","S","The authorization URL appears only after submission.","no"),
+     g("G3 Permissions","Capabilities you select","U"),g("G4 You need","Redirect URI, likely privacy policy, terms and support email","U","Official page lists only the redirect URI; third-party guides add the rest."),
+     g("G5 Before approval","Can't onboard public users","S","No authorization URL yet.","no"),g("G6 Ongoing","Install scope can't change later","S","Choose any workspace vs a specific set carefully.","no")],
+    blockers:[{text:"The install scope (any workspace or a chosen set) is fixed at creation.",ev:"S",src:"no"},{text:"Review time is unknown. We could not verify it.",ev:"U"}],
+    steps:[{who:"agent",text:"Prepare the form: name, redirect URI, privacy policy and terms links.",ev:"U"},
+     {who:"you",text:"Create the public connection and submit it for review.",ev:"S",src:"no"},
+     {who:"you",text:"Copy the Client ID and secret once approved.",ev:"U"},COMPOSIO_STEP],
+    wait_tip:"While you wait, use Composio's managed Notion app if the directory lists one."}
+  ]}
+];
+
+const TIER={green:{word:"Cleared",sub:"self-serve"},amber:{word:"Hold",sub:"review or unknown wait"},red:{word:"Gated",sub:"weeks or partner only"}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const getIntent=()=>document.querySelector('input[name=intent]:checked').value;
+const getAud=()=>document.querySelector('input[name=aud]:checked').value;
+const match=(w,i,a)=>(!w.intent||w.intent.includes(i))&&(!w.aud||w.aud.includes(a));
+const resolve=(app,i,a)=>app.paths.find(p=>match(p.when,i,a));
+const evTag=(ev,src)=>{const lbl={S:"SOURCED",T:"TESTED",U:"UNVERIFIED"}[ev]||"UNVERIFIED";
+  return src&&SRC[src]?`<a class="ev ${ev}" href="${SRC[src].u}" target="_blank" rel="noopener" title="${esc(SRC[src].t)}">${lbl}</a>`:`<span class="ev ${ev}">${lbl}</span>`};
+const INT_W={read:"read",write:"write",act:"act / admin"},AUD_W={team:"my team",public:"public users"};
+
+function board(){const i=getIntent(),a=getAud();
+  $('#board').innerHTML=LIB.map(app=>{const p=resolve(app,i,a);return `<button class="tile t-${p.tier}" data-id="${app.id}" type="button"><strong>${app.name}</strong><em>${esc(app.category)}</em><span class="chip c-${p.tier}">${TIER[p.tier].word} · ${esc(p.wait)}</span></button>`}).join('');
+  document.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{showLib(t.dataset.id)});
+  const cur=(location.hash||'').slice(1).split('-')[0];document.querySelectorAll('.tile').forEach(t=>t.classList.toggle('sel',t.dataset.id===cur));}
+
+function report(r,opts){
+  const t=TIER[r.tier]||TIER.amber;
+  const gauges=(r.gauges||[]).map(x=>`<tr><td>${esc(x.key)}</td><td><span class="val">${esc(x.value)}</span>${evTag(x.ev,x.src)}${x.note?`<div class="note">${esc(x.note)}</div>`:''}</td></tr>`).join('');
+  const blockers=(r.blockers||[]).map(b=>`<li><span aria-hidden="true">▲</span><span>${esc(b.text)} ${evTag(b.ev,b.src)}</span></li>`).join('');
+  const steps=(r.steps||[]).map(s=>`<li><span class="who ${s.who==='agent'?'agent':'you'}">${s.who==='agent'?'Agent':'You'}</span><span>${esc(s.text)} ${evTag(s.ev,s.src)}${s.note?`<div class="note" style="color:var(--muted);font-size:13px">${esc(s.note)}</div>`:''}</span></li>`).join('');
+  const srcs=(r.sources||[]).map(s=>`<li><a href="${esc(s.u)}" target="_blank" rel="noopener">${esc(s.t)}</a>${s.opened===false?' <span class="ev U">NOT OPENED</span>':''}</li>`).join('');
+  return `<article class="strip">
+   <div class="strip-head">
+     <div class="verdict v-${r.tier}">${t.word}<small>${t.sub}</small></div>
+     <div class="ident"><div class="label">${esc(r.category)} · ${opts.badge}</div><h2>${esc(r.name)}</h2><p>${esc(r.overview)}</p></div>
+     <div class="times"><div><span class="label">Your work</span><b>${esc(r.work)}</b></div><div><span class="label">Waiting</span><b>${esc(r.wait)}</b></div></div>
+   </div>
+   <div class="strip-body">
+     <div class="sec full"><h3>Why · for ${INT_W[opts.i]} · ${AUD_W[opts.a]}</h3><p style="margin:0">${esc(r.why)}</p>
+       <p style="margin:8px 0 0;color:var(--muted);font-size:14px">Composio managed app: ${esc(r.managed?.v||'Check the directory')} ${evTag(r.managed?.ev||'U',r.managed?.src||'cmpdir')}</p></div>
+     <div class="sec"><h3>Gauges</h3><table class="gauges"><tbody>${gauges}</tbody></table></div>
+     <div class="sec"><h3>What could block you</h3><ul class="clean">${blockers||'<li>None found.</li>'}</ul>
+       <h3 style="margin-top:18px">While you wait</h3><p style="margin:0">${esc(r.wait_tip||'')}</p></div>
+     <div class="sec full"><h3>Steps · G7 agent vs you</h3><ol class="steps">${steps}</ol></div>
+     ${r.unknowns&&r.unknowns.length?`<div class="sec full"><h3>Could not determine</h3><ul class="clean">${r.unknowns.map(u=>`<li><span aria-hidden="true">?</span><span>${esc(u)}</span></li>`).join('')}</ul></div>`:''}
+     ${srcs?`<div class="sec full"><h3>Sources</h3><ul class="clean" style="font-size:14px">${srcs}</ul></div>`:''}
+   </div>
+   <div class="foot"><span>${opts.foot}</span><span class="acts">${r.portal?`<a href="${esc(r.portal)}" target="_blank" rel="noopener">Open developer portal</a>`:''}<button class="ghost" type="button" id="copy">${opts.share?'Copy share link':'Copy as text'}</button></span></div>
+  </article>`;}
+
+function textOf(r,i,a){const L=[`${r.name}: ${TIER[r.tier].word} (${INT_W[i]}, ${AUD_W[a]})`,`Your work: ${r.work}. Waiting: ${r.wait}.`,r.why,'',"Blockers:",...(r.blockers||[]).map(b=>'- '+b.text),'',"Steps:",...(r.steps||[]).map((s,n)=>`${n+1}. [${s.who==='agent'?'Agent':'You'}] ${s.text}`),'',"From Clearance."];return L.join('\n')}
+function wireCopy(getText){const b=$('#copy');if(!b)return;b.onclick=async()=>{const t=getText();try{await navigator.clipboard.writeText(t);b.textContent='Copied'}catch(e){b.textContent='Copy failed: select the text instead'}setTimeout(()=>b.textContent=b.dataset.l||'Copy',1800)};b.dataset.l=b.textContent}
+
+function showLib(id,fromHash){const app=LIB.find(x=>x.id===id);if(!app)return;const i=getIntent(),a=getAud();const p=resolve(app,i,a);
+  const r={...app,...p};const h=`${id}-${i}-${a}`;if(!fromHash&&location.hash.slice(1)!==h)history.replaceState(null,'','#'+h);
+  $('#out').innerHTML=report(r,{i,a,badge:"Verified library",share:true,foot:"Layer 3: verified guide · last checked 29 Oct 2026"});
+  wireCopy(()=>{let u=location.href;return u});board();
+  if(!fromHash)$('#out').scrollIntoView({behavior:'smooth',block:'start'});}
+
+function findLib(q){q=q.toLowerCase().replace(/^https?:\/\//,'').replace(/^www\./,'');
+  const alias={github:"github","github.com":"github",slack:"slack","slack.com":"slack",gmail:"gmail","gmail.com":"gmail","google mail":"gmail",linkedin:"linkedin","linkedin.com":"linkedin",notion:"notion","notion.so":"notion","notion.com":"notion"};
+  return alias[q]||alias[q.split('/')[0]]||null}
+
+/* Live generation: an agent walks layers 0 to 5 using the viewer's own Claude access */
+const LAYERS=["Layer 0 · What is this app","Layer 1 · Category and its usual pattern","Layer 2 · Your intent and audience","Layer 3 · Checking the verified library","Layer 4 · Gauging access, review, permissions, limits","Layer 5 · Writing the verdict"];
+let ctl=null;
+function agentPrompt(q,i,a){return `You are Clearance, an agent that tells a developer how hard it is to get their own OAuth app ready with a provider, so their AI agent's users can connect.
+App the developer typed: "${q}"
+Their agent will: ${i} (read = fetch data; write = create or send; act = manage accounts, ads, payments or business data).
+Used by: ${a==='team'?'only people inside the developer\'s own company account':'public customers'}.
+
+Work through these layers in order:
+0. Identify the app and whether it offers OAuth 2.0 for third-party developers. If it does not, say so.
+1. Category, and what that category usually demands (payments often need business KYC, social often needs partner programmes, Google and Microsoft run formal verification).
+2. How the intent and audience change the path (internal-only use often skips review; read access to private data often triggers the strictest review).
+4. Gauge: G1 access gate (Open / Business verification / Partner programme / Paid plan / Closed), G2 review (None / Automated / Manual days / Manual weeks / Third-party audit), G3 permission level for this intent, G4 prerequisites the developer must own, G5 limits before approval, G6 ongoing duties.
+5. Verdict: tier is the worst of G1 and G2. green = self-serve no wait; amber = review of days or an unpublished wait; red = weeks, partner-only, closed, or audit.
+
+Honesty rules, these matter most:
+- You cannot browse. Everything you say comes from your training knowledge, which may be out of date. So every claim gets ev "U" (unverified). Never claim you tested or opened anything.
+- Never invent a timeline. If the provider doesn't publish one, say "Not published" and put it in unknowns.
+- If you don't recognise the app, return tier "amber", say so in overview, and fill unknowns. Do not guess details.
+- Sources: list official developer doc URLs you are confident exist, at most 3. They will be shown as "not opened".
+- Steps: tag who "you" for anything needing a login, legal sign-off, payment, ID verification or a video; who "agent" for drafting, mapping scopes, preparing form values. The last step is always: create a custom auth config in Composio with the client ID and secret.
+- Plain English, short sentences, no jargon without a gloss.
+
+Return ONLY this JSON, no prose around it:
+{"name":"","category":"","overview":"1-2 sentences","oauth":"yes|no|unclear","tier":"green|amber|red","work":"e.g. 30 to 60 min","wait":"e.g. None / About 2 weeks / Not published","why":"1-2 sentences","gauges":[{"key":"G1 Access","value":"","ev":"U","note":""},{"key":"G2 Review","value":"","ev":"U","note":""},{"key":"G3 Permissions","value":"","ev":"U","note":""},{"key":"G4 You need","value":"","ev":"U","note":""},{"key":"G5 Before approval","value":"","ev":"U","note":""},{"key":"G6 Ongoing","value":"","ev":"U","note":""}],"blockers":[{"text":"","ev":"U"}],"steps":[{"who":"agent|you","text":"","ev":"U"}],"wait_tip":"","unknowns":[""],"sources":[{"t":"","u":""}],"portal":"developer portal URL or empty"}`}
+
+async function live(q){const i=getIntent(),a=getAud();const out=$('#out');
+  let sample=null;try{sample=await claude.use("sample")}catch(e){}
+  if(!sample){out.innerHTML=`<div class="panel notice">Live generation runs inside Claude, on the viewer's own Claude account. Open this page at its claude.ai link while signed in to use it. The verified library above works everywhere.</div>`;return}
+  let step=0;const draw=(extra)=>{out.innerHTML=`<div class="panel"><div class="label" style="margin-bottom:10px">Generating clearance for "${esc(q)}" · ${INT_W[i]} · ${AUD_W[a]}</div><div class="progress">${LAYERS.map((l,n)=>`<span class="${n<=step?'on':'off'}">${n<step?'✓':n===step?'<span class="blink">▸</span>':'·'} ${l}</span>`).join('')}</div><p class="hint">${extra||'The agent can take up to a minute. It uses your Claude access; you may be asked to allow it.'}</p><button class="ghost" type="button" id="stop">Stop</button></div>`;$('#stop').onclick=()=>ctl?.abort()};
+  draw();const timer=setInterval(()=>{if(step<LAYERS.length-1){step++;draw()}},6000);
+  ctl=new AbortController();$('#go').disabled=true;
+  try{const res=await sample(agentPrompt(q,i,a),{signal:ctl.signal,modelTier:"default",onText:({text})=>{step=Math.max(step,LAYERS.length-1);draw(`Writing the report… ${text.length} characters`)}});
+    clearInterval(timer);const m=res.text.match(/\{[\s\S]*\}/);if(!m)throw{code:"parse"};const r=JSON.parse(m[0]);
+    r.tier=['green','amber','red'].includes(r.tier)?r.tier:'amber';
+    r.sources=(r.sources||[]).filter(s=>s&&/^https:\/\//.test(s.u)).map(s=>({...s,opened:false}));
+    (r.steps||[]).forEach(s=>s.ev='U');(r.gauges||[]).forEach(x=>x.ev='U');(r.blockers||[]).forEach(b=>b.ev='U');
+    if(r.portal&&!/^https:\/\//.test(r.portal))r.portal='';
+    r.managed={v:"Check the directory",ev:"U",src:"cmpdir"};
+    out.innerHTML=`<div class="notice" style="margin-bottom:10px">Generated live from the model's knowledge, without browsing. Treat every line as unverified until you check the sources.</div>`+report(r,{i,a,badge:"Generated live",share:false,foot:"Layer 3: not in the verified library · generated "+new Date().toUTCString().slice(5,22)+" UTC"});
+    wireCopy(()=>textOf(r,i,a));
+  }catch(e){clearInterval(timer);const code=e&&e.code;
+    const msg={cancelled:"Stopped.",not_granted:"Live generation needs your OK to use Claude. Reload and allow it to try again.",rate_limited:"Too many requests just now. Wait a minute and try again.",parse:"The agent's answer didn't come back in the expected format. Try again."}[code]||"Live generation failed. Try again, or pick a verified app above.";
+    out.innerHTML=`<div class="panel notice">${msg}</div>`}
+  finally{$('#go').disabled=false}}
+
+$('#req').addEventListener('submit',e=>{e.preventDefault();const q=$('#app').value.trim();if(!q){$('#app').focus();return}
+  const id=findLib(q);if(id)showLib(id);else{history.replaceState(null,'',location.pathname+location.search);board();live(q)}});
+document.querySelectorAll('input[name=intent],input[name=aud]').forEach(r=>r.addEventListener('change',()=>{const cur=(location.hash||'').slice(1).split('-')[0];board();if(LIB.find(x=>x.id===cur))showLib(cur,false)}));
+function fromHash(){const [id,i,a]=(location.hash||'').slice(1).split('-');if(i&&document.getElementById('i-'+i))document.getElementById('i-'+i).checked=true;if(a&&document.getElementById('a-'+a))document.getElementById('a-'+a).checked=true;
+  if(LIB.find(x=>x.id===id))showLib(id,true);else showLib('gmail',true)}
+window.addEventListener('hashchange',fromHash);
+board();fromHash();
+</script>
