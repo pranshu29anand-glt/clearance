@@ -64,10 +64,25 @@ Checked on 29 Oct 2026. Sourced means we opened the official page and the claim 
 | Managed apps show "Composio" on the consent screen, share quota, and have a 15-minute minimum polling interval | Sourced | same |
 | Managed status for LinkedIn and Notion | **Unverified.** The directory page loads client-side and we couldn't read it | [Directory](https://docs.composio.dev/toolkits/managed-auth) |
 
+
+## Agent setup attempts (no login, 29 Oct 2026, 19:15 UTC)
+
+An agent tried to start each provider's OAuth flow and open its developer portal from a clean machine, to find exactly where it gets stopped.
+
+| Provider | What the agent tried | What happened | What it means |
+| --- | --- | --- | --- |
+| Google | Started authorization with an unregistered client ID asking for gmail.readonly | Redirected to an error: "The OAuth client was not found" (invalid_client) | Nothing works until you register a client. The Cloud console redirects to sign-in, so a human logs in. |
+| LinkedIn | Started authorization with an unregistered client ID | "The passed in client_id is invalid" | Same: you need a registered app first. |
+| Notion | Started authorization with an unregistered client ID | Redirected to the install-integration page, with no error shown before sign-in | Notion checks the client only after the user signs in, so a bad setup surfaces late. |
+| Slack | Authorization URL and app dashboard | Both load a sign-in page | Creating the app needs a human Slack login. |
+| GitHub | Authorization URL and new-app page | Blocked by our sandbox's network proxy (403) | Not tested. This is a limit of our environment, not of GitHub. |
+
+Creating a real OAuth app needs a logged-in browser session on every provider, and GitHub has no public API for creating OAuth apps. That's why every "create the app" step in the guides is tagged "You". The agent's job is everything before and after that step.
+
 ## Summary
 
 | Tally | Count |
 | --- | --- |
 | Corrected | 1 |
-| Tested | 1 (no-login probe) |
+| Tested | 5 (no-login probes) |
 | Open unknowns | 8 |
