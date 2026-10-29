@@ -180,7 +180,77 @@ table.g .n{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
 .how p b{color:var(--ink);font-weight:500}
 footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:20px;font-family:var(--f-mono);font-size:12px;color:var(--faint)}
 footer a{color:var(--muted)}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* what's next */
+.next{position:relative;overflow:hidden;border-radius:20px;border:1px solid var(--line-2);background:radial-gradient(700px 300px at 80% 0%,rgba(21,88,201,.35),transparent 70%),var(--surface);padding:44px 36px}
+@media (max-width:560px){.next{padding:32px 20px}}
+.next h2{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,4.6vw,48px);line-height:1.05;margin:12px 0 14px;max-width:16ch;text-wrap:balance}
+.next h2 em{font-style:normal;color:var(--lime)}
+.next p.lede{color:var(--muted);max-width:56ch;margin:0 0 26px;font-size:16px}
+.punch{position:relative;font-family:var(--f-display);font-weight:700;font-size:16px;letter-spacing:.04em;cursor:pointer;border:0;border-radius:999px;padding:16px 26px;background:var(--lime);color:var(--bg);box-shadow:0 0 0 0 rgba(212,255,36,.6);animation:pulse 2.4s ease-out infinite;transition:transform .15s}
+.punch:hover{transform:translateY(-2px) scale(1.02)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,255,36,.45)}70%{box-shadow:0 0 0 18px rgba(212,255,36,0)}100%{box-shadow:0 0 0 0 rgba(212,255,36,0)}}
+.punch-sub{display:block;margin-top:12px;font-family:var(--f-mono);font-size:12px;color:var(--faint)}
+.mini-stars{position:absolute;inset:0;pointer-events:none;opacity:.55;background-image:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 70% 20%,#fff,transparent),radial-gradient(1.5px 1.5px at 85% 60%,#fff,transparent),radial-gradient(1px 1px at 40% 80%,#fff,transparent),radial-gradient(1px 1px at 60% 50%,#9bb8ff,transparent),radial-gradient(1px 1px at 10% 70%,#fff,transparent),radial-gradient(1.5px 1.5px at 92% 15%,#D4FF24,transparent)}
+.eps{list-style:none;margin:34px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;position:relative}
+@media (max-width:900px){.eps{grid-template-columns:1fr}}
+.eps li{border-top:1px solid var(--line-2);padding-top:12px;min-width:0}
+.eps .ep{font-family:var(--f-mono);font-size:11.5px;color:var(--cobalt-text);letter-spacing:.08em}
+.eps b{display:block;font-family:var(--f-display);font-weight:500;font-size:14.5px;margin:4px 0 4px}
+.eps span.d{color:var(--muted);font-size:13px}
+/* overlay */
+.hyper{position:fixed;inset:0;z-index:50;background:#010103;overflow:hidden;color:var(--ink)}
+.hyper canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.h-ctrl{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));display:flex;gap:8px;z-index:5}
+.h-ctrl .btn{background:rgba(3,4,7,.6);backdrop-filter:blur(6px)}
+.h-intro,.h-logo{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:0 24px;opacity:0;pointer-events:none}
+.h-intro p{font-family:var(--f-body);font-size:clamp(18px,2.6vw,28px);color:#6f9bf0;max-width:24ch;line-height:1.4;margin:0}
+.h-logo span{font-family:var(--f-display);font-weight:800;font-size:clamp(48px,11vw,150px);letter-spacing:.06em;color:transparent;-webkit-text-stroke:2px var(--lime)}
+.p-intro .h-intro{animation:fadeio 3.4s ease forwards}
+@keyframes fadeio{0%{opacity:0}18%{opacity:1}78%{opacity:1}100%{opacity:0}}
+.p-logo .h-logo{animation:logo 4.2s ease-in forwards}
+@keyframes logo{0%{opacity:1;transform:scale(1.6)}100%{opacity:0;transform:scale(.06)}}
+.h-stage{position:absolute;inset:0;display:flex;justify-content:center;perspective:340px;overflow:hidden;opacity:0;pointer-events:none}
+.h-stage::before{content:"";position:absolute;inset:0 0 auto;height:42%;background:linear-gradient(#010103 15%,transparent);z-index:2}
+.p-crawl .h-stage,.p-logo .h-stage{opacity:1}
+.h-crawl{position:relative;top:100vh;width:min(86vw,640px);transform-origin:50% 100%;color:var(--lime);font-family:var(--f-display);font-weight:500;font-size:clamp(20px,3.6vw,34px);line-height:1.5;text-align:justify;hyphens:auto}
+.p-crawl .h-crawl{animation:crawl 34s linear forwards}
+@keyframes crawl{0%{top:100vh;transform:rotateX(24deg) translateZ(0)}100%{top:-40vh;transform:rotateX(26deg) translateZ(-2200px)}}
+.h-crawl .ttl{text-align:center;margin-bottom:1.2em}
+.h-crawl .ttl small{display:block;font-size:.6em;letter-spacing:.2em}
+.h-crawl .ttl strong{display:block;font-size:1.5em;font-weight:800;letter-spacing:.06em}
+.h-crawl p{margin:0 0 1.1em}
+.h-map{position:absolute;inset:0;overflow-y:auto;padding:calc(70px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) 40px max(20px,env(safe-area-inset-left,0px));opacity:0;pointer-events:none;transition:opacity .6s}
+.p-map .h-map{opacity:1;pointer-events:auto}
+.p-map #h-skip{display:none}
+.h-map-in{max-width:1180px;margin:0 auto}
+.h-map h2{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,4vw,44px);margin:8px 0 6px}
+.h-map h2 em{font-style:normal;color:var(--lime)}
+.h-map .lede{color:var(--muted);margin:0 0 30px;max-width:60ch}
+.route{position:relative}
+.route svg{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.route path{stroke:var(--lime);stroke-width:1.5;fill:none;stroke-dasharray:6 8;opacity:.7}
+.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;position:relative}
+@media (max-width:980px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.cards{grid-template-columns:1fr}}
+.ecard{position:relative;background:rgba(8,11,18,.88);backdrop-filter:blur(6px);border:1px solid var(--line-2);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;opacity:0;transform:translateY(40px) rotateX(35deg) scale(.9);transform-origin:50% 100%;min-width:0}
+.p-map .ecard{animation:bloom .8s cubic-bezier(.2,.9,.25,1.25) forwards}
+.ecard:nth-child(1){animation-delay:.15s!important}.ecard:nth-child(2){animation-delay:.35s!important}.ecard:nth-child(3){animation-delay:.55s!important}.ecard:nth-child(4){animation-delay:.75s!important}.ecard:nth-child(5){animation-delay:.95s!important}
+@keyframes bloom{to{opacity:1;transform:none}}
+@media (min-width:981px){.ecard:nth-child(even){margin-top:46px}}
+.ecard .num{font-family:var(--f-mono);font-weight:500;font-size:13px;letter-spacing:.14em;color:var(--cobalt-text)}
+.ecard .num b{display:block;font-family:var(--f-display);font-weight:800;font-size:34px;letter-spacing:0;line-height:1;color:var(--ink);margin-top:4px}
+.ecard.now .num{color:var(--lime)}
+.ecard h3{font-family:var(--f-display);font-weight:500;font-size:16px;margin:0;line-height:1.25}
+.ecard .tagline{font-family:var(--f-mono);font-size:11.5px;color:var(--faint)}
+.ecard p{margin:0;font-size:13.5px;color:var(--muted)}
+.ecard p b{color:var(--ink);font-weight:500}
+.ecard .metric{margin-top:auto;padding-top:10px;border-top:1px dashed var(--line-2);font-family:var(--f-mono);font-size:11.5px;color:var(--ink)}
+.ecard .metric span{color:var(--faint)}
+.st-chip{align-self:flex-start;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;padding:3px 8px;border-radius:999px}
+.st-chip.now{background:var(--lime);color:var(--bg)} .st-chip.next{background:var(--cobalt);color:#fff} .st-chip.later{box-shadow:inset 0 0 0 1px var(--line-2);color:var(--muted)}
+.h-end{margin-top:34px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.ecard{opacity:1;transform:none}}
 </style>
 
 <div class="wrap">
@@ -188,7 +258,7 @@ footer a{color:var(--muted)}
     <div class="mark"><i aria-hidden="true"></i>CLEARANCE</div>
     <div class="tower">
       <span>TOWER · UTC <b id="utc">--:--:--</b></span><span>IST <b id="ist">--:--:--</b></span>
-      <nav><a href="#fine">Fine print</a><a href="#how">Scoring</a><a id="prd-link" href="#" target="_blank" rel="noopener">PRD</a><a id="repo-link" href="#" target="_blank" rel="noopener">Repo</a></nav>
+      <nav><a href="#next">What's next</a><a href="#fine">Fine print</a><a href="#how">Scoring</a><a id="prd-link" href="#" target="_blank" rel="noopener">PRD</a><a id="repo-link" href="#" target="_blank" rel="noopener">Repo</a></nav>
     </div>
   </div>
 
@@ -239,6 +309,18 @@ footer a{color:var(--muted)}
 
   <section id="out" aria-live="polite"></section>
 
+  <section class="next" id="next">
+    <div class="mini-stars" aria-hidden="true"></div>
+    <div style="position:relative">
+      <div class="kicker">what's next · the roadmap</div>
+      <h2>Five apps today. <em>The whole galaxy</em> next.</h2>
+      <p class="lede">v1 answers one question for five apps. Here's how Clearance grows into the place every agent builder checks before launch, and how it ends up inside Composio.</p>
+      <button class="punch" type="button" id="punch">Punch it ⟶</button>
+      <span class="punch-sub">best with the sound off and the lights low · 40 seconds · skippable</span>
+      <ol class="eps" id="eps"></ol>
+    </div>
+  </section>
+
   <section id="fine">
     <div class="sec-head"><h2>The fine print, honestly</h2><span class="kicker">what Clearance won't pretend to know</span></div>
     <div class="fine">
@@ -261,6 +343,26 @@ footer a{color:var(--muted)}
   </section>
 
   <footer><span>Clearance v1 · a take-home for Composio · built by <a href="https://app.notion.com/p/32244e320dfe81a69501d3aee6859b52" target="_blank" rel="noopener">Pranshu Anand</a></span><span>No OAuth tokens were harmed. Not affiliated with Composio or any provider.</span></footer>
+</div>
+
+<div class="hyper" id="hyper" hidden role="dialog" aria-modal="true" aria-label="What's next for Clearance">
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="h-intro"><p>A few releases from now, in a launch plan not so far away…</p></div>
+  <div class="h-stage" aria-hidden="true"><div class="h-crawl">
+    <div class="ttl"><small>EPISODE I½</small><strong>THE LAUNCH AWAKENS</strong></div>
+    <p>It is a period of launch anxiety. Agent builders, racing to ship, are being held at the gates of the OAuth Empire by sensitive scopes, unpublished review times and security audits nobody warned them about.</p>
+    <p>Armed with CLEARANCE, a lone product manager has mapped five of the Empire's gates, with receipts for every claim.</p>
+    <p>But the galaxy holds a thousand more apps. To free every builder, the tower must learn to read the docs on its own, remember every approval, and live where developers already work…</p>
+  </div></div>
+  <div class="h-logo" aria-hidden="true"><span>CLEARANCE</span></div>
+  <div class="h-map"><div class="h-map-in">
+    <div class="kicker">the roadmap · five episodes</div>
+    <h2>From a lookup to <em>launch control.</em></h2>
+    <p class="lede">Each episode solves the next-biggest reason a developer still gets stuck. Ordered by how much launch pain it removes per unit of effort.</p>
+    <div class="route"><svg id="route" aria-hidden="true"></svg><div class="cards" id="cards"></div></div>
+    <div class="h-end"><button class="btn" type="button" id="h-close2">Back to the tower</button><span>May the scopes be ever in your favour. Wrong franchise. You get the idea.</span></div>
+  </div></div>
+  <div class="h-ctrl"><button class="btn" type="button" id="h-skip">skip to the map</button><button class="btn" type="button" id="h-close" aria-label="Close">close ✕</button></div>
 </div>
 
 <script>
@@ -567,4 +669,44 @@ function fromHash(){const [id,i,a]=(location.hash||'').slice(1).split('-');if(i&
   if(LIB.find(x=>x.id===id))showLib(id,true);else{board();showLib('gmail',true)}}
 window.addEventListener('hashchange',fromHash);
 fromHash();
+
+/* what's next */
+const EPS=[
+ {n:"I",t:"The Phantom Approval",st:"now",tag:"v1 · shipped",what:"<b>5 verified apps</b>, verdicts that change with intent and audience, a live agent for everything else, receipts on every claim.",why:"Proves the question developers actually ask is \"will this block my launch?\"",m:"launch decision in under 5 min"},
+ {n:"II",t:"Attack of the Docs",st:"next",tag:"live research",what:"Live mode <b>reads the provider's official docs</b> as it works, so live reports come back Sourced, not Unverified. Every live report becomes a draft a human approves into the library.",why:"The library grows itself. Layer 3 gets smarter with every search.",m:"share of live claims Sourced"},
+ {n:"III",t:"Revenge of the 100",st:"next",tag:"coverage + freshness",what:"The <b>top 100 Composio toolkits</b>, ranked by usage × difficulty. An agent re-checks every source monthly and flags what changed.",why:"Rules change on a Tuesday. Stale guidance is worse than none.",m:"guides older than 30 days: 0"},
+ {n:"IV",t:"A New Hope",st:"later",tag:"inside Composio",what:"The verdict shows up <b>inside Composio's dashboard</b> when a developer creates a custom auth config. The agent pre-fills the provider form and the Composio config through programmatic auth configs.",why:"Guidance where the work happens, and fewer abandoned custom configs.",m:"time from config to first connected user"},
+ {n:"V",t:"The Empire Approves Back",st:"later",tag:"the moat",what:"Developers log their <b>real submit and approval dates</b>. Clearance shows real medians per app and scope, and tracks your submissions with reminders.",why:"Real wait-time data nobody publishes. That's the moat.",m:"apps with crowd-sourced wait times"}
+];
+$('#eps').innerHTML=EPS.map(e=>`<li><span class="ep">EPISODE ${e.n} · ${e.st.toUpperCase()}</span><b>${e.t}</b><span class="d">${e.tag}</span></li>`).join('');
+$('#cards').innerHTML=EPS.map(e=>`<article class="ecard ${e.st}"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><span class="num">EPISODE<b>${e.n}</b></span><span class="st-chip ${e.st}">${e.st.toUpperCase()}</span></div><h3>${e.t}</h3><span class="tagline">${e.tag}</span><p>${e.what}</p><p>${e.why}</p><div class="metric"><span>metric · </span>${e.m}</div></article>`).join('');
+
+const H=$('#hyper'),cv=$('#stars'),cx=cv.getContext('2d');let stars=[],raf=0,speed=0,timers=[],lastFocus=null;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function sizeCv(){const d=Math.min(devicePixelRatio||1,2);cv.width=innerWidth*d;cv.height=innerHeight*d;cx.setTransform(d,0,0,d,0,0)}
+function seed(){stars=Array.from({length:520},()=>({x:(Math.random()-.5)*innerWidth*2,y:(Math.random()-.5)*innerHeight*2,z:Math.random()*innerWidth,c:Math.random()<.06?'#D4FF24':Math.random()<.3?'#8fb2ff':'#ffffff'}))}
+function frame(){const w=innerWidth,h=innerHeight,ox=w/2,oy=h/2;cx.fillStyle=speed>8?'rgba(1,1,3,.35)':'rgba(1,1,3,.9)';cx.fillRect(0,0,w,h);
+  for(const s of stars){const pz=s.z;s.z-=speed;if(s.z<1){s.z=w;s.x=(Math.random()-.5)*w*2;s.y=(Math.random()-.5)*h*2;continue}
+    const k=w/2/s.z,x=ox+s.x*k,y=oy+s.y*k,pk=w/2/pz,px=ox+s.x*pk,py=oy+s.y*pk;
+    cx.strokeStyle=s.c;cx.globalAlpha=Math.min(1,1.4-s.z/w);cx.lineWidth=Math.max(.6,1.8-s.z/w*1.5);cx.beginPath();cx.moveTo(px,py);cx.lineTo(x,y);cx.stroke()}
+  cx.globalAlpha=1;raf=requestAnimationFrame(frame)}
+function drawRoute(){const svg=$('#route'),cs=[...document.querySelectorAll('.ecard')],box=svg.parentElement.getBoundingClientRect();if(!cs.length)return;
+  const pts=cs.map(c=>{const r=c.getBoundingClientRect();return [r.left-box.left+r.width/2,r.top-box.top+28]});
+  svg.setAttribute('viewBox',`0 0 ${box.width} ${box.height}`);let d=`M${pts[0][0]} ${pts[0][1]}`;for(let i=1;i<pts.length;i++){const [x0,y0]=pts[i-1],[x1,y1]=pts[i];d+=` C${(x0+x1)/2} ${y0-40} ${(x0+x1)/2} ${y1-40} ${x1} ${y1}`}
+  svg.innerHTML=innerWidth>980?`<path d="${d}"/>`:''}
+function phase(p){H.className='hyper '+p;if(p==='p-map'){speed=0.6;setTimeout(drawRoute,1300)}}
+function later(fn,ms){timers.push(setTimeout(fn,ms))}
+function openHyper(){lastFocus=document.activeElement;H.hidden=false;document.body.style.overflow='hidden';sizeCv();seed();cancelAnimationFrame(raf);
+  if(reduce){speed=0;frame();phase('p-map');$('#h-close').focus();return}
+  speed=2;frame();phase('p-jump');$('#h-close').focus();
+  let t=0;const ramp=setInterval(()=>{t++;speed=Math.min(42,2+t*2.2);if(t>22){clearInterval(ramp)}},50);timers.push(ramp);
+  later(()=>{speed=1.2;phase('p-intro')},1700);
+  later(()=>{phase('p-logo');$('.h-crawl').style.animation='none';void $('.h-crawl').offsetWidth;$('.h-crawl').style.animation=''},5200);
+  later(()=>phase('p-crawl'),6400);
+  later(()=>{speed=30;later(()=>phase('p-map'),700)},6400+30000)}
+function closeHyper(){timers.forEach(x=>{clearTimeout(x);clearInterval(x)});timers=[];cancelAnimationFrame(raf);H.hidden=true;H.className='hyper';document.body.style.overflow='';lastFocus&&lastFocus.focus()}
+$('#punch').onclick=openHyper;$('#h-close').onclick=closeHyper;$('#h-close2').onclick=closeHyper;
+$('#h-skip').onclick=()=>{timers.forEach(x=>{clearTimeout(x);clearInterval(x)});timers=[];speed=30;setTimeout(()=>phase('p-map'),400)};
+addEventListener('keydown',e=>{if(!H.hidden&&e.key==='Escape')closeHyper()});
+addEventListener('resize',()=>{if(!H.hidden){sizeCv();drawRoute()}});
 </script>
