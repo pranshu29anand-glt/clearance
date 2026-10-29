@@ -1,176 +1,272 @@
 <title>Clearance</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a control-tower clearance desk. Header with Zulu clock, a request strip, then flight-strip style reports. */
+/* Layout: a night-shift control tower. Radar hero, a terminal console, flight tickets, then a stamped clearance report.
+   Single dark theme by design (midnight black, electric cobalt, white, a dash of acid lime). */
 :root{
-  --bg:#eef1f4; --panel:#ffffff; --ink:#14202b; --muted:#5a6773; --line:#cfd6dd; --strip:#f7f9fb;
-  --accent:#1f5fbf; --go:#1b7f4b; --hold:#b26a00; --stop:#b3261e;
-  --go-bg:#e3f3ea; --hold-bg:#fbf0dc; --stop-bg:#fbe4e2; --accent-bg:#e4edfa;
-  --f-display:"IBM Plex Sans Condensed","Arial Narrow",sans-serif;
-  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+  --bg:#030407; --surface:#080b12; --surface-2:#0d121d; --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.16);
+  --ink:#ffffff; --muted:#9ba4b8; --faint:#5d6679;
+  --cobalt:#1558C9; --cobalt-text:#6f9bf0; --cobalt-wash:rgba(21,88,201,.16);
+  --lime:#D4FF24; --lime-wash:rgba(212,255,36,.10);
+  --coral:#ff6b5b; --coral-wash:rgba(255,107,91,.12);
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --f-body:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0f161d; --panel:#16202a; --ink:#e6edf3; --muted:#9aa7b3; --line:#2b3946; --strip:#1b2733;
-  --accent:#7fb0ff; --go:#5fd19a; --hold:#f2b45a; --stop:#ff8a80;
-  --go-bg:#16342a; --hold-bg:#3a2c14; --stop-bg:#3d1d1b; --accent-bg:#1c2c44; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0f161d; --panel:#16202a; --ink:#e6edf3; --muted:#9aa7b3; --line:#2b3946; --strip:#1b2733;
-  --accent:#7fb0ff; --go:#5fd19a; --hold:#f2b45a; --stop:#ff8a80;
-  --go-bg:#16342a; --hold-bg:#3a2c14; --stop-bg:#3d1d1b; --accent-bg:#1c2c44; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
-.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
-a{color:var(--accent)}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:12px}
-.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.brand h1{font-family:var(--f-display);font-weight:700;font-size:34px;letter-spacing:.04em;margin:0;text-transform:uppercase}
-.brand span{color:var(--muted);font-size:14px}
-.clock{font-family:var(--f-mono);font-size:13px;color:var(--muted);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-.clock b{color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums}
-.clock nav{display:flex;gap:12px}
-.lead{font-size:18px;max-width:62ch;margin:0;text-wrap:balance}
-.lead small{display:block;color:var(--muted);font-size:14px;margin-top:6px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px}
-.label{font-family:var(--f-display);font-weight:600;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-form.req{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) auto;gap:14px;align-items:end}
-@media (max-width:760px){form.req{grid-template-columns:1fr}}
-.field{display:flex;flex-direction:column;gap:6px;min-width:0}
-input[type=text]{font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--strip);color:var(--ink);width:100%}
-.seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
-.seg label{flex:1;text-align:center;padding:9px 6px;cursor:pointer;font-size:14px;border-left:1px solid var(--line);background:var(--strip)}
-.seg label:first-child{border-left:0}
-.seg input{position:absolute;opacity:0;pointer-events:none}
-.seg input:checked+span{font-weight:600}
-.seg label:has(input:checked){background:var(--accent-bg);color:var(--ink);box-shadow:inset 0 -2px 0 var(--accent)}
-.seg label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:-2px}
-button{font:inherit;font-weight:600;cursor:pointer;border-radius:4px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);padding:10px 16px}
-button.ghost{background:transparent;color:var(--ink);border-color:var(--line);font-weight:500}
-button:disabled{opacity:.5;cursor:default}
-.hint{color:var(--muted);font-size:13px;margin:10px 0 0}
-.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
-.tile{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:6px;padding:12px;border:1px solid var(--line);border-radius:4px;background:var(--panel);border-left:6px solid var(--muted)}
-.tile:focus-visible{outline:2px solid var(--accent)}
-.tile strong{font-family:var(--f-display);font-size:18px;letter-spacing:.02em}
-.tile em{font-style:normal;color:var(--muted);font-size:13px}
-.tile.sel{box-shadow:0 0 0 2px var(--accent)}
-.tile .chip{white-space:normal;align-self:flex-start}
-.t-green{border-left-color:var(--go)} .t-amber{border-left-color:var(--hold)} .t-red{border-left-color:var(--stop)}
-.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:12px;padding:2px 8px;border-radius:3px;white-space:nowrap}
-.c-green{background:var(--go-bg);color:var(--go)} .c-amber{background:var(--hold-bg);color:var(--hold)} .c-red{background:var(--stop-bg);color:var(--stop)}
-/* The report = a clearance strip */
-.strip{background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.strip-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:0;border-bottom:1px solid var(--line)}
-@media (max-width:640px){.strip-head{grid-template-columns:1fr}}
-.verdict{padding:16px 20px;font-family:var(--f-display);font-weight:700;font-size:26px;letter-spacing:.06em;text-transform:uppercase;display:flex;flex-direction:column;justify-content:center;min-width:180px}
-.verdict small{font-family:var(--f-mono);font-weight:400;font-size:12px;letter-spacing:0;text-transform:none}
-.v-green{background:var(--go-bg);color:var(--go)} .v-amber{background:var(--hold-bg);color:var(--hold)} .v-red{background:var(--stop-bg);color:var(--stop)}
-.ident{padding:16px 20px;min-width:0}
-.ident h2{margin:0;font-family:var(--f-display);font-size:28px;letter-spacing:.02em}
-.ident p{margin:4px 0 0;color:var(--muted)}
-.times{display:grid;grid-template-columns:1fr 1fr;border-left:1px solid var(--line)}
-@media (max-width:640px){.times{border-left:0;border-top:1px solid var(--line)}}
-.times div{padding:14px 18px;border-left:1px solid var(--line);min-width:130px}
-.times div:first-child{border-left:0}
-.times b{display:block;font-family:var(--f-mono);font-size:17px;font-weight:500;font-variant-numeric:tabular-nums}
-.strip-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}
-@media (max-width:760px){.strip-body{grid-template-columns:1fr}}
-.sec{padding:16px 20px;border-top:1px solid var(--line);min-width:0}
-.sec:nth-child(odd){border-right:1px solid var(--line)}
-@media (max-width:760px){.sec:nth-child(odd){border-right:0}}
-.sec.full{grid-column:1/-1;border-right:0}
-.sec h3{margin:0 0 10px;font-family:var(--f-display);font-weight:600;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.gauges{width:100%;border-collapse:collapse;font-size:14px}
-.gauges td{padding:8px 6px;border-top:1px solid var(--line);vertical-align:top}
-.gauges tr:first-child td{border-top:0}
-.gauges td:first-child{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap;width:1%}
-.gauges .val{font-weight:600}
-.gauges .note{color:var(--muted);font-size:13px}
-ul.clean{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-ul.clean li{display:flex;gap:8px;align-items:flex-start}
-ol.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:8px}
-ol.steps li{counter-increment:s;display:grid;grid-template-columns:28px 74px minmax(0,1fr);gap:8px;align-items:start;padding:8px 0;border-top:1px dashed var(--line)}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 56px;
+  background-image:radial-gradient(1200px 500px at 85% -10%,rgba(21,88,201,.22),transparent 60%),linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:auto,56px 56px,56px 56px;background-attachment:fixed}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+a{color:var(--cobalt-text);text-underline-offset:3px}
+a:hover{color:var(--ink)}
+:focus-visible{outline:2px solid var(--lime);outline-offset:3px;border-radius:4px}
+::selection{background:var(--lime);color:var(--bg)}
+.mono{font-family:var(--f-mono)}
+.kicker{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* top bar */
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-block:18px;border-bottom:1px solid var(--line)}
+.mark{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:18px;letter-spacing:.08em}
+.mark i{width:12px;height:12px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px var(--lime-wash);display:inline-block}
+.tower{display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.tower b{color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums}
+.tower nav{display:flex;gap:14px}
+.tower nav a{color:var(--muted);text-decoration:none}.tower nav a:hover{color:var(--ink)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:40px;align-items:center;padding-top:24px}
+@media (max-width:860px){.hero{grid-template-columns:1fr}}
+.hero h1{font-family:var(--f-display);font-weight:700;font-size:clamp(34px,5.4vw,60px);line-height:1.04;letter-spacing:-.01em;margin:14px 0 18px;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--cobalt-text)}
+.hero p{font-size:17px;color:var(--muted);max-width:52ch;margin:0}
+.hero p b{color:var(--ink);font-weight:500}
+.radar-box{position:relative;max-width:420px;width:100%;justify-self:center}
+.radar-box svg{display:block;width:100%;height:auto}
+.sweep{transform-origin:200px 200px;animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.radar-cap{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:center;margin-top:6px}
+
+/* console */
+.console{background:var(--surface);border:1px solid var(--line-2);border-radius:14px;overflow:hidden;box-shadow:0 30px 80px -40px rgba(21,88,201,.55)}
+.console-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-family:var(--f-mono);font-size:12px;color:var(--faint)}
+.console-bar span.dot{width:10px;height:10px;border-radius:50%;background:var(--line-2)}
+.console-bar .ttl{margin-left:8px}
+.console form{padding:22px 22px 18px;display:flex;flex-direction:column;gap:18px}
+.cmd{font-family:var(--f-mono);font-size:clamp(14px,2.1vw,19px);display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;line-height:1.4}
+.cmd .p{color:var(--lime)}
+.cmd .w{color:var(--muted)}
+.cmd .flag{color:var(--cobalt-text)}
+.cmd input{font:inherit;color:var(--ink);background:transparent;border:0;border-bottom:1.5px dashed var(--cobalt);padding:2px 2px;min-width:0;width:min(260px,60vw);outline:none}
+.cmd input::placeholder{color:var(--faint)}
+.cmd input:focus{border-bottom-color:var(--lime);border-bottom-style:solid}
+.cmd .val{color:var(--ink)}
+.opts{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center}
+.grp{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.grp .kicker{font-size:11px}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pills label{position:relative;cursor:pointer;font-family:var(--f-mono);font-size:13px;padding:7px 12px;border-radius:999px;border:1px solid var(--line-2);color:var(--muted);transition:all .15s}
+.pills input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.pills label:has(input:checked){background:var(--cobalt);border-color:var(--cobalt);color:var(--ink)}
+.pills label:has(input:focus-visible){outline:2px solid var(--lime);outline-offset:2px}
+.run{margin-left:auto;font-family:var(--f-mono);font-weight:500;font-size:14px;cursor:pointer;border:0;border-radius:10px;padding:12px 18px;background:var(--ink);color:var(--bg);transition:background .15s}
+.run:hover,.run:focus-visible{background:var(--lime)}
+.run:disabled{opacity:.5;cursor:default}
+.console .hint{margin:0;padding:12px 22px;border-top:1px solid var(--line);font-size:13px;color:var(--faint);font-family:var(--f-mono)}
+.console .hint b{color:var(--muted);font-weight:500}
+
+/* tickets */
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.sec-head h2{font-family:var(--f-display);font-weight:500;font-size:22px;margin:0}
+.tickets{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+@media (max-width:960px){.tickets{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:560px){.tickets{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ticket{all:unset;box-sizing:border-box;cursor:pointer;position:relative;display:flex;flex-direction:column;gap:14px;padding:16px;border-radius:12px;background:var(--surface);border:1px solid var(--line);transition:border-color .15s,transform .15s;min-width:0}
+.ticket:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.ticket:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+.ticket.sel{border-color:var(--cobalt);box-shadow:inset 0 0 0 1px var(--cobalt)}
+.ticket::after{content:"";position:absolute;left:12px;right:12px;top:62px;border-top:1px dashed var(--line-2)}
+.glyph{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:15px;background:var(--surface-2);border:1px solid var(--line-2)}
+.ticket .nm{font-family:var(--f-display);font-weight:500;font-size:16px;margin-top:4px}
+.ticket .cat{font-size:12.5px;color:var(--muted)}
+.ticket .st{display:flex;justify-content:space-between;align-items:center;gap:6px;font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.tag{font-family:var(--f-mono);font-size:11px;font-weight:500;letter-spacing:.08em;padding:3px 7px;border-radius:5px;white-space:nowrap}
+.tag.green{background:var(--lime);color:var(--bg)} .tag.amber{background:var(--cobalt);color:var(--ink)} .tag.red{background:var(--coral-wash);color:var(--coral);box-shadow:inset 0 0 0 1px var(--coral)}
+
+/* report */
+.report{background:var(--surface);border:1px solid var(--line-2);border-radius:16px;overflow:hidden}
+.r-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center;padding:28px}
+@media (max-width:640px){.r-head{grid-template-columns:1fr;gap:18px}}
+.stamp{font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:.12em;padding:14px 18px;border:3px double currentColor;border-radius:8px;transform:rotate(-5deg);text-align:center;line-height:1.1;min-width:170px}
+.stamp small{display:block;font-family:var(--f-mono);font-weight:400;font-size:11px;letter-spacing:.06em;margin-top:6px;text-transform:none}
+.stamp.green{color:var(--lime)} .stamp.amber{color:var(--cobalt-text)} .stamp.red{color:var(--coral)}
+.r-id h3{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,4vw,38px);margin:6px 0 8px}
+.r-id p{margin:0;color:var(--muted);max-width:68ch}
+.r-id p.why{color:var(--ink);margin-top:10px;font-size:16px}
+.timebar{padding:0 28px 26px}
+.tb{display:grid;grid-template-columns:72px minmax(0,1fr) 190px;gap:12px;align-items:center;font-family:var(--f-mono);font-size:12.5px;margin-top:10px}
+.tb .who{color:var(--muted)}
+.tb .track{height:14px;border-radius:7px;background:var(--surface-2);position:relative;overflow:hidden;border:1px solid var(--line)}
+.tb .fill{position:absolute;inset:0 auto 0 0;border-radius:7px}
+.tb .fill.you{background:var(--ink)} .tb .fill.them{background:var(--cobalt)}
+.tb .fill.unk{background:repeating-linear-gradient(90deg,var(--cobalt) 0 8px,transparent 8px 14px);opacity:.8}
+.tb b{font-weight:500;color:var(--ink);white-space:nowrap;text-align:right}
+.scale{position:relative;height:14px;font-family:var(--f-mono);font-size:10.5px;color:var(--faint)}
+.scale span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}.scale span:first-child{transform:none}.scale span:last-child{transform:translateX(-100%)}
+@media (max-width:560px){.tb{grid-template-columns:44px minmax(0,1fr)}.tb b{grid-column:2;text-align:left}.scale span:nth-child(2),.scale span:nth-child(4){display:none}}
+.r-body{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);border-top:1px solid var(--line)}
+@media (max-width:820px){.r-body{grid-template-columns:1fr}}
+.col{padding:24px 28px;min-width:0}
+.col+.col{border-left:1px solid var(--line)}
+@media (max-width:820px){.col+.col{border-left:0;border-top:1px solid var(--line)}}
+.col h4{font-family:var(--f-mono);font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+ol.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;counter-reset:s}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:30px 58px minmax(0,1fr);gap:10px;padding:11px 0;border-top:1px solid var(--line);align-items:start}
 ol.steps li:first-child{border-top:0}
-ol.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--f-mono);color:var(--muted);font-size:13px;padding-top:2px}
-.who{font-family:var(--f-mono);font-size:11px;padding:3px 6px;border-radius:3px;text-align:center;text-transform:uppercase;letter-spacing:.04em}
-.who.agent{background:var(--accent-bg);color:var(--accent)} .who.you{background:var(--strip);color:var(--ink);border:1px solid var(--line)}
-.ev{display:inline-block;font-family:var(--f-mono);font-size:10.5px;font-weight:500;padding:1px 5px;border-radius:3px;border:1px solid currentColor;margin-left:4px;vertical-align:1px;text-decoration:none;white-space:nowrap}
-.ev.S{color:var(--go)} .ev.U{color:var(--hold)} .ev.T{color:var(--accent)}
-.foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding:12px 20px;border-top:1px solid var(--line);background:var(--strip);font-size:13px;color:var(--muted)}
-.foot .acts{display:flex;gap:8px;flex-wrap:wrap}
-.foot button{padding:6px 12px;font-size:13px}
-.progress{font-family:var(--f-mono);font-size:13px;display:flex;flex-direction:column;gap:4px}
-.progress .on{color:var(--ink)} .progress .off{color:var(--muted)}
-.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted)}
-.notice{border-left:4px solid var(--hold);background:var(--hold-bg);padding:10px 14px;border-radius:3px;font-size:14px}
-.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;font-size:14px}
-@media (max-width:760px){.how{grid-template-columns:1fr}}
-.how h4{margin:0 0 6px;font-family:var(--f-display);font-size:16px}
-.how p{margin:0;color:var(--muted)}
-footer{color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-.blink{animation:bl 1s steps(2) infinite}@keyframes bl{50%{opacity:.3}}
+ol.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--f-mono);font-size:12.5px;color:var(--faint);padding-top:2px}
+.actor{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;padding:3px 0;border-radius:4px;text-align:center}
+.actor.agent{background:var(--cobalt-wash);color:var(--cobalt-text);box-shadow:inset 0 0 0 1px rgba(21,88,201,.5)}
+.actor.you{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-2)}
+.sub{display:block;color:var(--faint);font-size:13px;margin-top:3px}
+ul.bites{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+ul.bites li{padding-left:18px;position:relative}
+ul.bites li::before{content:"";position:absolute;left:0;top:9px;width:7px;height:7px;background:var(--coral);transform:rotate(45deg)}
+.wait{margin-top:22px;padding:14px 16px;border-radius:10px;background:var(--lime-wash);border:1px solid rgba(212,255,36,.25)}
+.wait .kicker{color:var(--lime);font-size:11px}
+.wait p{margin:6px 0 0}
+.ev{display:inline-block;font-family:var(--f-mono);font-size:10px;font-weight:500;letter-spacing:.06em;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:1px;text-decoration:none;white-space:nowrap;border:1px solid currentColor}
+.ev.S{color:var(--muted)} .ev.T{color:var(--lime)} .ev.U{color:var(--coral)}
+a.ev:hover{color:var(--ink)}
+details.receipts{border-top:1px solid var(--line)}
+details.receipts summary{cursor:pointer;list-style:none;padding:16px 28px;font-family:var(--f-mono);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:12px}
+details.receipts summary::-webkit-details-marker{display:none}
+details.receipts summary:hover{color:var(--ink)}
+details.receipts summary::after{content:"+";font-size:16px;line-height:1}
+details.receipts[open] summary::after{content:"–"}
+.rec{padding:0 28px 24px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px}
+@media (max-width:820px){.rec{grid-template-columns:1fr}}
+table.g{width:100%;border-collapse:collapse;font-size:13.5px}
+table.g td{padding:9px 6px;border-top:1px solid var(--line);vertical-align:top}
+table.g td:first-child{font-family:var(--f-mono);font-size:11.5px;color:var(--faint);white-space:nowrap;width:1%;padding-left:0}
+table.g .n{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.srcs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:13.5px}
+.r-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 28px;border-top:1px solid var(--line);background:var(--surface-2);font-family:var(--f-mono);font-size:12px;color:var(--faint)}
+.r-foot .acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font:inherit;font-family:var(--f-mono);font-size:12.5px;cursor:pointer;border-radius:8px;padding:8px 12px;border:1px solid var(--line-2);background:transparent;color:var(--ink)}
+.btn:hover{border-color:var(--lime);color:var(--lime)}
+.banner{padding:12px 16px;border-radius:10px;border:1px solid rgba(255,107,91,.4);background:var(--coral-wash);font-size:14px;margin-bottom:12px}
+.panel{background:var(--surface);border:1px solid var(--line-2);border-radius:16px;padding:26px 28px}
+.layers{font-family:var(--f-mono);font-size:13.5px;display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.layers .on{color:var(--ink)} .layers .off{color:var(--faint)} .layers .ok{color:var(--lime)}
+.blink{animation:bl 1s steps(2) infinite}@keyframes bl{50%{opacity:.2}}
+
+/* fine print */
+.fine{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.fine{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.fine{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.card .no{font-family:var(--f-mono);font-size:11.5px;color:var(--cobalt-text)}
+.card h3{font-family:var(--f-display);font-weight:500;font-size:16px;margin:0;line-height:1.3}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+@media (max-width:860px){.how{grid-template-columns:1fr}}
+.how h3{font-family:var(--f-display);font-weight:500;font-size:16px;margin:0 0 8px}
+.how p{margin:0;color:var(--muted);font-size:14px}
+.how p b{color:var(--ink);font-weight:500}
+footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:20px;font-family:var(--f-mono);font-size:12px;color:var(--faint)}
+footer a{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
 <div class="wrap">
-  <header>
-    <div class="brand"><h1>Clearance</h1><span>Will this app block your launch?</span></div>
-    <div class="clock">
-      <span>UTC <b id="utc">--:--:--</b></span><span>IST <b id="ist">--:--:--</b></span>
-      <nav><a href="#how">How we score</a><a id="prd-link" href="https://github.com/" target="_blank" rel="noopener">PRD</a><a id="repo-link" href="https://github.com/" target="_blank" rel="noopener">Repo</a></nav>
+  <div class="top">
+    <div class="mark"><i aria-hidden="true"></i>CLEARANCE</div>
+    <div class="tower">
+      <span>TOWER · UTC <b id="utc">--:--:--</b></span><span>IST <b id="ist">--:--:--</b></span>
+      <nav><a href="#fine">Fine print</a><a href="#how">Scoring</a><a id="prd-link" href="#" target="_blank" rel="noopener">PRD</a><a id="repo-link" href="#" target="_blank" rel="noopener">Repo</a></nav>
     </div>
-  </header>
+  </div>
 
-  <p class="lead">Before your AI agent can connect to someone's Slack or Gmail, you need your own OAuth app with that provider, and some providers make you wait weeks. Clearance tells you how long it will take, what will block you, and which steps an agent can do for you.
-    <small>Pick an app, say what your agent will do and who will use it. The answer changes with both.</small></p>
+  <section class="hero">
+    <div>
+      <div class="kicker">OAuth app approval, before launch day</div>
+      <h1>Your agent is ready. <em>Is the provider?</em></h1>
+      <p>Before users can connect their Gmail or Slack to your agent, you need your own OAuth app with that provider. Some take 10 minutes. Some take <b>six weeks and a security audit</b>. Clearance tells you which, what will bite you, and what an agent can do for you.</p>
+    </div>
+    <div class="radar-box">
+      <svg id="radar" viewBox="0 0 400 400" role="img" aria-label="Radar of verified apps: closer to the centre means sooner to launch"></svg>
+      <div class="radar-cap">closer to the centre = sooner you ship · changes with your flags</div>
+    </div>
+  </section>
 
-  <section class="panel" aria-label="Request clearance">
-    <form class="req" id="req">
-      <div class="field"><label class="label" for="app">App name or website</label>
-        <input type="text" id="app" placeholder="e.g. Gmail, razorpay.com, Zoom" autocomplete="off"></div>
-      <div class="field"><span class="label" id="l-int">Your agent will</span>
-        <div class="seg" role="radiogroup" aria-labelledby="l-int">
-          <label><input type="radio" name="intent" id="i-read" value="read" checked><span>Read</span></label>
-          <label><input type="radio" name="intent" id="i-write" value="write"><span>Write</span></label>
-          <label><input type="radio" name="intent" id="i-act" value="act"><span>Act / admin</span></label>
-        </div></div>
-      <div class="field"><span class="label" id="l-aud">Used by</span>
-        <div class="seg" role="radiogroup" aria-labelledby="l-aud">
-          <label><input type="radio" name="aud" id="a-team" value="team"><span>My team</span></label>
-          <label><input type="radio" name="aud" id="a-public" value="public" checked><span>Public</span></label>
-        </div></div>
-      <button type="submit" id="go">Check clearance</button>
+  <section class="console" aria-label="Check an app">
+    <div class="console-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">~/launch-plan — works on my machine. will it work on google's?</span></div>
+    <form id="req">
+      <div class="cmd" aria-live="off">
+        <span class="p">$</span><span class="w">clearance check</span>
+        <label for="app" class="sr" style="position:absolute;left:-9999px">App name or website</label>
+        <input type="text" id="app" placeholder="gmail, razorpay.com, zoom…" autocomplete="off" spellcheck="false">
+        <span class="flag">--does</span><span class="val" id="v-int">read</span>
+        <span class="flag">--for</span><span class="val" id="v-aud">public</span>
+      </div>
+      <div class="opts">
+        <div class="grp"><span class="kicker" id="l-int">your agent will</span>
+          <div class="pills" role="radiogroup" aria-labelledby="l-int">
+            <label><input type="radio" name="intent" id="i-read" value="read" checked>read</label>
+            <label><input type="radio" name="intent" id="i-write" value="write">write</label>
+            <label><input type="radio" name="intent" id="i-act" value="act">act / admin</label>
+          </div></div>
+        <div class="grp"><span class="kicker" id="l-aud">used by</span>
+          <div class="pills" role="radiogroup" aria-labelledby="l-aud">
+            <label><input type="radio" name="aud" id="a-team" value="team">my team</label>
+            <label><input type="radio" name="aud" id="a-public" value="public" checked>public</label>
+          </div></div>
+        <button class="run" type="submit" id="go">Run check ⏎</button>
+      </div>
     </form>
-    <p class="hint">Read = fetch data (emails, messages, files). Write = create or send (post, send email). Act / admin = manage accounts, ads, payments or business data. My team = only people inside your own company account.</p>
+    <p class="hint"><b>read</b> fetch emails, messages, files · <b>write</b> post, send, create · <b>act / admin</b> ads, payments, accounts · <b>my team</b> only people inside your own company account</p>
   </section>
 
   <section aria-label="Verified library">
-    <div class="label" style="margin-bottom:8px">Verified library · checked 29 Oct 2026</div>
-    <div class="board" id="board"></div>
+    <div class="sec-head"><h2>Verified library</h2><span class="kicker">5 apps · checked 29 Oct 2026 · tap one</span></div>
+    <div class="tickets" id="board"></div>
   </section>
 
   <section id="out" aria-live="polite"></section>
 
-  <section class="panel" id="how">
-    <div class="label" style="margin-bottom:12px">How we score</div>
-    <div class="how">
-      <div><h4>The verdict</h4><p>Set by the worst of two gauges: who can get access, and what review applies. <b style="color:var(--go)">Cleared</b> = self-serve, no wait. <b style="color:var(--hold)">Hold</b> = a review of days or an unpublished wait. <b style="color:var(--stop)">Gated</b> = weeks, a partner programme, or a paid audit.</p></div>
-      <div><h4>The layers</h4><p>0 What is this app. 1 Category. 2 What you want to do, and for whom. 3 Have we verified it. 4 Seven gauges: access, review, permission level, prerequisites, limits before approval, ongoing duties, agent vs you. 5 The verdict and next action.</p></div>
-      <div><h4>The evidence</h4><p><span class="ev S">SOURCED</span> we opened the official doc. <span class="ev T">TESTED</span> an agent tried it. <span class="ev U">UNVERIFIED</span> inferred or from third parties; check before you plan on it. Live reports start unverified.</p></div>
+  <section id="fine">
+    <div class="sec-head"><h2>The fine print, honestly</h2><span class="kicker">what Clearance won't pretend to know</span></div>
+    <div class="fine">
+      <div class="card"><span class="no">01 · live mode</span><h3>It can't browse. Yet.</h3><p>Apps outside the library are answered from Claude's own knowledge, so every line gets stamped UNVERIFIED. We'd rather say "not published" than invent a date.</p></div>
+      <div class="card"><span class="no">02 · login walls</span><h3>Creating the app is a human job.</h3><p>Our agent tried all five providers and got bounced by every one at sign-in. It does the paperwork around that step: values, scopes, justifications.</p></div>
+      <div class="card"><span class="no">03 · coverage</span><h3>Five apps, not a hundred.</h3><p>Five checked against the source beat a hundred guessed. Adding the next app is one data entry.</p></div>
+      <div class="card"><span class="no">04 · freshness</span><h3>Rules change on a Tuesday.</h3><p>Slack throttled unlisted apps in May 2025 without asking anyone. Every guide shows when it was last checked.</p></div>
+      <div class="card"><span class="no">05 · access</span><h3>Live mode needs a Claude login.</h3><p>It runs on the viewer's own Claude account, which is why it's free. No login, no live mode. The library works for everyone.</p></div>
+      <div class="card"><span class="no">06 · secrets</span><h3>We never see your keys.</h3><p>No credentials are stored or asked for. If you paste a client secret into the search box, that's between you and your security team.</p></div>
     </div>
   </section>
 
-  <footer><span>Clearance v1 · a take-home for Composio · built by <a href="https://app.notion.com/p/32244e320dfe81a69501d3aee6859b52" target="_blank" rel="noopener">Pranshu Anand</a></span><span>Not affiliated with Composio or any provider. Rules change; check the sources.</span></footer>
+  <section class="panel" id="how">
+    <div class="sec-head" style="margin-bottom:22px"><h2>How we score</h2><span class="kicker">the same model runs the library and the agent</span></div>
+    <div class="how">
+      <div><h3>Six layers</h3><p>0 what is this app · 1 category · 2 what you'll do and for whom · 3 have we verified it · 4 seven gauges · 5 the verdict. Layer 2 matters most: same app, different intent, different month.</p></div>
+      <div><h3>One verdict</h3><p>The worst of two gauges, access and review. <b style="color:var(--lime)">Cleared</b> self-serve, no wait. <b style="color:var(--cobalt-text)">Holding</b> days of review, or a wait nobody publishes. <b style="color:var(--coral)">Grounded</b> weeks, a partner programme, or an audit.</p></div>
+      <div><h3>Receipts</h3><p><span class="ev S">SOURCED</span> we opened the official doc. <span class="ev T">TESTED</span> an agent tried it. <span class="ev U">UNVERIFIED</span> inferred or third-party. Check those before you plan around them.</p></div>
+    </div>
+  </section>
+
+  <footer><span>Clearance v1 · a take-home for Composio · built by <a href="https://app.notion.com/p/32244e320dfe81a69501d3aee6859b52" target="_blank" rel="noopener">Pranshu Anand</a></span><span>No OAuth tokens were harmed. Not affiliated with Composio or any provider.</span></footer>
 </div>
 
 <script>
 const LINKS={prd:"https://app.notion.com/p/40844e320dfe8191a6dace4b2516465c",repo:"https://github.com/pranshu29anand-glt/clearance"};
 document.getElementById('prd-link').href=LINKS.prd;document.getElementById('repo-link').href=LINKS.repo;
-function tick(){const d=new Date();const f=(z)=>d.toLocaleTimeString('en-GB',{timeZone:z,hour12:false});
+function tick(){const d=new Date();const f=z=>d.toLocaleTimeString('en-GB',{timeZone:z,hour12:false});
   document.getElementById('utc').textContent=f('UTC');document.getElementById('ist').textContent=f('Asia/Kolkata');}
 tick();setInterval(tick,1000);
 
@@ -330,7 +426,9 @@ const LIB=[
   ]}
 ];
 
-const TIER={green:{word:"Cleared",sub:"self-serve"},amber:{word:"Hold",sub:"review or unknown wait"},red:{word:"Gated",sub:"weeks or partner only"}};
+
+
+const TIER={green:{word:"CLEARED",sub:"cleared for takeoff",tag:"CLEARED"},amber:{word:"HOLDING",sub:"holding pattern",tag:"HOLDING"},red:{word:"GROUNDED",sub:"grounded, for now",tag:"GROUNDED"}};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const getIntent=()=>document.querySelector('input[name=intent]:checked').value;
@@ -339,53 +437,83 @@ const match=(w,i,a)=>(!w.intent||w.intent.includes(i))&&(!w.aud||w.aud.includes(
 const resolve=(app,i,a)=>app.paths.find(p=>match(p.when,i,a));
 const evTag=(ev,src)=>{const lbl={S:"SOURCED",T:"TESTED",U:"UNVERIFIED"}[ev]||"UNVERIFIED";
   return src&&SRC[src]?`<a class="ev ${ev}" href="${SRC[src].u}" target="_blank" rel="noopener" title="${esc(SRC[src].t)}">${lbl}</a>`:`<span class="ev ${ev}">${lbl}</span>`};
-const INT_W={read:"read",write:"write",act:"act / admin"},AUD_W={team:"my team",public:"public users"};
+const INT_W={read:"read",write:"write",act:"act / admin"},AUD_W={team:"my team",public:"public"};
+
+/* hours from a human string; work days = 8h, wait days = 24h */
+function hrs(s,isWait){s=String(s||'').toLowerCase();if(/^none|no wait/.test(s))return 0;
+  const n=(s.match(/\d+(\.\d+)?/g)||[]).map(Number);if(!n.length)return null;const v=Math.max(...n);
+  if(/min/.test(s))return v/60;if(/week/.test(s))return v*(isWait?168:40);if(/day/.test(s))return v*(isWait?24:8);if(/h/.test(s))return v;return null}
+const LOGMAX=Math.log10(1500);const pct=h=>h==null?100:h<=0?0:Math.max(3,Math.min(100,(Math.log10(h*6+1))/ (Math.log10(1500*6+1))*100));
+
+function radar(){const i=getIntent(),a=getAud();const svg=$('#radar');
+  const col={green:"var(--lime)",amber:"var(--cobalt-text)",red:"var(--coral)"};const dist={green:62,amber:112,red:160};
+  const ang=[-60,10,80,150,220];
+  let h=`<defs><radialGradient id="rg" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#1558C9" stop-opacity=".28"/><stop offset="1" stop-color="#1558C9" stop-opacity="0"/></radialGradient>
+  <linearGradient id="sw" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1558C9" stop-opacity="0"/><stop offset="1" stop-color="#1558C9" stop-opacity=".55"/></linearGradient></defs>
+  <circle cx="200" cy="200" r="190" fill="url(#rg)"/>`;
+  [62,112,160,190].forEach(r=>h+=`<circle cx="200" cy="200" r="${r}" fill="none" stroke="rgba(255,255,255,.12)" stroke-dasharray="${r===190?'0':'2 5'}"/>`);
+  h+=`<line x1="10" y1="200" x2="390" y2="200" stroke="rgba(255,255,255,.07)"/><line x1="200" y1="10" x2="200" y2="390" stroke="rgba(255,255,255,.07)"/>`;
+  h+=`<g class="sweep"><path d="M200 200 L390 200 A190 190 0 0 0 334 66 Z" fill="url(#sw)" opacity=".7"/></g>`;
+  h+=`<text x="142" y="194" fill="#5d6679" font-family="Geist Mono,monospace" font-size="10">today</text><text x="92" y="194" fill="#5d6679" font-family="Geist Mono,monospace" font-size="10">days</text><text x="44" y="194" fill="#5d6679" font-family="Geist Mono,monospace" font-size="10">weeks</text>`;
+  LIB.forEach((app,k)=>{const p=resolve(app,i,a);const r=dist[p.tier],t=ang[k]*Math.PI/180;const x=200+r*Math.cos(t),y=200+r*Math.sin(t);const c=col[p.tier];
+    const lx=x+(Math.cos(t)>=0?12:-12),anchor=Math.cos(t)>=0?'start':'end';
+    h+=`<g><circle cx="${x}" cy="${y}" r="14" fill="${c}" opacity=".14"/><circle cx="${x}" cy="${y}" r="5" fill="${c}"/><text x="${lx}" y="${y+4}" text-anchor="${anchor}" fill="#fff" font-family="Geist Mono,monospace" font-size="12">${app.name}</text></g>`});
+  h+=`<circle cx="200" cy="200" r="4" fill="#fff"/><text x="200" y="224" text-anchor="middle" fill="#9ba4b8" font-family="Geist Mono,monospace" font-size="10">you</text>`;
+  svg.innerHTML=h}
 
 function board(){const i=getIntent(),a=getAud();
-  $('#board').innerHTML=LIB.map(app=>{const p=resolve(app,i,a);return `<button class="tile t-${p.tier}" data-id="${app.id}" type="button"><strong>${app.name}</strong><em>${esc(app.category)}</em><span class="chip c-${p.tier}">${TIER[p.tier].word} · ${esc(p.wait)}</span></button>`}).join('');
-  document.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{showLib(t.dataset.id)});
-  const cur=(location.hash||'').slice(1).split('-')[0];document.querySelectorAll('.tile').forEach(t=>t.classList.toggle('sel',t.dataset.id===cur));}
+  $('#board').innerHTML=LIB.map(app=>{const p=resolve(app,i,a);return `<button class="ticket" data-id="${app.id}" type="button" aria-label="${app.name}: ${TIER[p.tier].word}">
+    <span style="display:flex;justify-content:space-between;align-items:center"><span class="glyph">${app.name[0]}</span><span class="tag ${p.tier}">${TIER[p.tier].tag}</span></span>
+    <span><span class="nm" style="display:block">${app.name}</span><span class="cat">${esc(app.category)}</span></span>
+    <span class="st"><span>wait</span><span style="color:var(--ink)">${esc(p.wait)}</span></span></button>`}).join('');
+  document.querySelectorAll('.ticket').forEach(t=>t.onclick=()=>showLib(t.dataset.id));
+  const cur=(location.hash||'').slice(1).split('-')[0];document.querySelectorAll('.ticket').forEach(t=>t.classList.toggle('sel',t.dataset.id===cur));
+  radar();$('#v-int').textContent=i;$('#v-aud').textContent=a==='team'?'my-team':'public';}
 
-function report(r,opts){
-  const t=TIER[r.tier]||TIER.amber;
-  const gauges=(r.gauges||[]).map(x=>`<tr><td>${esc(x.key)}</td><td><span class="val">${esc(x.value)}</span>${evTag(x.ev,x.src)}${x.note?`<div class="note">${esc(x.note)}</div>`:''}</td></tr>`).join('');
-  const blockers=(r.blockers||[]).map(b=>`<li><span aria-hidden="true">▲</span><span>${esc(b.text)} ${evTag(b.ev,b.src)}</span></li>`).join('');
-  const steps=(r.steps||[]).map(s=>`<li><span class="who ${s.who==='agent'?'agent':'you'}">${s.who==='agent'?'Agent':'You'}</span><span>${esc(s.text)} ${evTag(s.ev,s.src)}${s.note?`<div class="note" style="color:var(--muted);font-size:13px">${esc(s.note)}</div>`:''}</span></li>`).join('');
-  const srcs=(r.sources||[]).map(s=>`<li><a href="${esc(s.u)}" target="_blank" rel="noopener">${esc(s.t)}</a>${s.opened===false?' <span class="ev U">NOT OPENED</span>':''}</li>`).join('');
-  return `<article class="strip">
-   <div class="strip-head">
-     <div class="verdict v-${r.tier}">${t.word}<small>${t.sub}</small></div>
-     <div class="ident"><div class="label">${esc(r.category)} · ${opts.badge}</div><h2>${esc(r.name)}</h2><p>${esc(r.overview)}</p></div>
-     <div class="times"><div><span class="label">Your work</span><b>${esc(r.work)}</b></div><div><span class="label">Waiting</span><b>${esc(r.wait)}</b></div></div>
+function bars(r){const w=hrs(r.work,false),t=hrs(r.wait,true);
+  return `<div class="timebar"><div class="kicker">time to ready · log scale</div>
+   <div class="tb"><span class="who">you</span><span class="track"><span class="fill you" style="width:${pct(w)}%"></span></span><b>${esc(r.work)}</b></div>
+   <div class="tb"><span class="who">them</span><span class="track"><span class="fill ${t==null?'unk':'them'}" style="width:${pct(t)}%"></span></span><b>${esc(r.wait)}</b></div>
+   <div class="tb"><span></span><span class="scale">${[[0,'0'],[1,'1 hour'],[24,'1 day'],[168,'1 week'],[1440,'2 months']].map(([h,l])=>`<span style="left:${pct(h)}%">${l}</span>`).join('')}</span><span></span></div></div>`}
+
+function report(r,o){const t=TIER[r.tier]||TIER.amber;
+  const steps=(r.steps||[]).map(s=>`<li><span class="actor ${s.who==='agent'?'agent':'you'}">${s.who==='agent'?'AGENT':'YOU'}</span><span>${esc(s.text)}${evTag(s.ev,s.src)}${s.note?`<span class="sub">${esc(s.note)}</span>`:''}</span></li>`).join('');
+  const bites=(r.blockers||[]).map(b=>`<li>${esc(b.text)}${evTag(b.ev,b.src)}</li>`).join('')||'<li>Nothing found.</li>';
+  const gauges=(r.gauges||[]).map(x=>`<tr><td>${esc(x.key)}</td><td>${esc(x.value)}${evTag(x.ev,x.src)}${x.note?`<span class="n">${esc(x.note)}</span>`:''}</td></tr>`).join('');
+  const srcs=(r.sources||[]).map(s=>`<li><a href="${esc(s.u)}" target="_blank" rel="noopener">${esc(s.t)}</a>${s.opened===false?'<span class="ev U">NOT OPENED</span>':''}</li>`).join('');
+  const unk=(r.unknowns||[]).filter(Boolean);
+  return `<article class="report">
+   <div class="r-head"><div class="stamp ${r.tier}">${t.word}<small>${t.sub}</small></div>
+     <div class="r-id"><div class="kicker">${esc(r.category)} · ${o.badge} · ${INT_W[o.i]} · ${AUD_W[o.a]}</div><h3>${esc(r.name)}</h3><p>${esc(r.overview)}</p><p class="why">${esc(r.why)}</p></div></div>
+   ${bars(r)}
+   <div class="r-body">
+     <div class="col"><h4>Do this next</h4><ol class="steps">${steps}</ol></div>
+     <div class="col"><h4>What could bite you</h4><ul class="bites">${bites}</ul>
+       ${r.wait_tip?`<div class="wait"><span class="kicker">while you wait</span><p>${esc(r.wait_tip)}</p></div>`:''}
+       ${unk.length?`<h4 style="margin-top:22px">Could not determine</h4><ul class="bites">${unk.map(u=>`<li>${esc(u)}</li>`).join('')}</ul>`:''}</div>
    </div>
-   <div class="strip-body">
-     <div class="sec full"><h3>Why · for ${INT_W[opts.i]} · ${AUD_W[opts.a]}</h3><p style="margin:0">${esc(r.why)}</p>
-       <p style="margin:8px 0 0;color:var(--muted);font-size:14px">Composio managed app: ${esc(r.managed?.v||'Check the directory')} ${evTag(r.managed?.ev||'U',r.managed?.src||'cmpdir')}</p></div>
-     <div class="sec"><h3>Gauges</h3><table class="gauges"><tbody>${gauges}</tbody></table></div>
-     <div class="sec"><h3>What could block you</h3><ul class="clean">${blockers||'<li>None found.</li>'}</ul>
-       <h3 style="margin-top:18px">While you wait</h3><p style="margin:0">${esc(r.wait_tip||'')}</p></div>
-     <div class="sec full"><h3>Steps · G7 agent vs you</h3><ol class="steps">${steps}</ol></div>
-     ${r.unknowns&&r.unknowns.length?`<div class="sec full"><h3>Could not determine</h3><ul class="clean">${r.unknowns.map(u=>`<li><span aria-hidden="true">?</span><span>${esc(u)}</span></li>`).join('')}</ul></div>`:''}
-     ${srcs?`<div class="sec full"><h3>Sources</h3><ul class="clean" style="font-size:14px">${srcs}</ul></div>`:''}
-   </div>
-   <div class="foot"><span>${opts.foot}</span><span class="acts">${r.portal?`<a href="${esc(r.portal)}" target="_blank" rel="noopener">Open developer portal</a>`:''}<button class="ghost" type="button" id="copy">${opts.share?'Copy share link':'Copy as text'}</button></span></div>
-  </article>`;}
+   <details class="receipts"><summary>Receipts · gauges, Composio status, sources</summary>
+     <div class="rec"><table class="g"><tbody>${gauges}</tbody></table>
+       <div><h4 style="font-family:var(--f-mono);font-weight:500;font-size:12px;letter-spacing:.14em;color:var(--muted);margin:0 0 12px">COMPOSIO MANAGED APP</h4><p style="margin:0 0 20px;font-size:13.5px">${esc(r.managed?.v||'Check the directory')}${evTag(r.managed?.ev||'U',r.managed?.src||'cmpdir')}</p>
+       ${srcs?`<h4 style="font-family:var(--f-mono);font-weight:500;font-size:12px;letter-spacing:.14em;color:var(--muted);margin:0 0 12px">SOURCES</h4><ul class="srcs">${srcs}</ul>`:''}</div></div>
+   </details>
+   <div class="r-foot"><span>${o.foot}</span><span class="acts">${r.portal?`<a href="${esc(r.portal)}" target="_blank" rel="noopener">developer portal ↗</a>`:''}<button class="btn" type="button" id="copy">${o.share?'copy share link':'copy as text'}</button></span></div>
+  </article>`}
 
-function textOf(r,i,a){const L=[`${r.name}: ${TIER[r.tier].word} (${INT_W[i]}, ${AUD_W[a]})`,`Your work: ${r.work}. Waiting: ${r.wait}.`,r.why,'',"Blockers:",...(r.blockers||[]).map(b=>'- '+b.text),'',"Steps:",...(r.steps||[]).map((s,n)=>`${n+1}. [${s.who==='agent'?'Agent':'You'}] ${s.text}`),'',"From Clearance."];return L.join('\n')}
-function wireCopy(getText){const b=$('#copy');if(!b)return;b.onclick=async()=>{const t=getText();try{await navigator.clipboard.writeText(t);b.textContent='Copied'}catch(e){b.textContent='Copy failed: select the text instead'}setTimeout(()=>b.textContent=b.dataset.l||'Copy',1800)};b.dataset.l=b.textContent}
+function textOf(r,i,a){return [`${r.name}: ${TIER[r.tier].word} (${INT_W[i]}, ${AUD_W[a]})`,`Your work: ${r.work}. Waiting: ${r.wait}.`,r.why,'','What could bite you:',...(r.blockers||[]).map(b=>'- '+b.text),'','Do this next:',...(r.steps||[]).map((s,n)=>`${n+1}. [${s.who==='agent'?'Agent':'You'}] ${s.text}`),'','From Clearance (unverified live report).'].join('\n')}
+function wireCopy(get){const b=$('#copy');if(!b)return;const l=b.textContent;b.onclick=async()=>{try{await navigator.clipboard.writeText(get());b.textContent='copied ✓'}catch(e){b.textContent='copy blocked, select the text'}setTimeout(()=>b.textContent=l,1800)}}
 
-function showLib(id,fromHash){const app=LIB.find(x=>x.id===id);if(!app)return;const i=getIntent(),a=getAud();const p=resolve(app,i,a);
-  const r={...app,...p};const h=`${id}-${i}-${a}`;if(!fromHash&&location.hash.slice(1)!==h)history.replaceState(null,'','#'+h);
-  $('#out').innerHTML=report(r,{i,a,badge:"Verified library",share:true,foot:"Layer 3: verified guide · last checked 29 Oct 2026"});
-  wireCopy(()=>{let u=location.href;return u});board();
-  if(!fromHash)$('#out').scrollIntoView({behavior:'smooth',block:'start'});}
+function sourcesFor(p){const ks=new Set();[...(p.gauges||[]),...(p.blockers||[]),...(p.steps||[])].forEach(x=>x.src&&ks.add(x.src));return [...ks].map(k=>({t:SRC[k].t,u:SRC[k].u}))}
+function showLib(id,fromHash,noScroll){const app=LIB.find(x=>x.id===id);if(!app)return;const i=getIntent(),a=getAud();const p=resolve(app,i,a);
+  const r={...app,...p,sources:sourcesFor(p)};const h=`${id}-${i}-${a}`;if(!fromHash&&location.hash.slice(1)!==h)history.replaceState(null,'','#'+h);
+  $('#out').innerHTML=report(r,{i,a,badge:"verified",share:true,foot:"verified guide · last checked 29 Oct 2026"});wireCopy(()=>location.href);board();
+  if(!fromHash&&!noScroll)$('#out').scrollIntoView({behavior:'smooth',block:'start'})}
 
-function findLib(q){q=q.toLowerCase().replace(/^https?:\/\//,'').replace(/^www\./,'');
-  const alias={github:"github","github.com":"github",slack:"slack","slack.com":"slack",gmail:"gmail","gmail.com":"gmail","google mail":"gmail",linkedin:"linkedin","linkedin.com":"linkedin",notion:"notion","notion.so":"notion","notion.com":"notion"};
-  return alias[q]||alias[q.split('/')[0]]||null}
+function findLib(q){q=q.toLowerCase().trim().replace(/^https?:\/\//,'').replace(/^www\./,'');
+  const al={github:"github","github.com":"github",slack:"slack","slack.com":"slack",gmail:"gmail","gmail.com":"gmail","google mail":"gmail",linkedin:"linkedin","linkedin.com":"linkedin",notion:"notion","notion.so":"notion","notion.com":"notion"};
+  return al[q]||al[q.split('/')[0]]||null}
 
-/* Live generation: an agent walks layers 0 to 5 using the viewer's own Claude access */
-const LAYERS=["Layer 0 · What is this app","Layer 1 · Category and its usual pattern","Layer 2 · Your intent and audience","Layer 3 · Checking the verified library","Layer 4 · Gauging access, review, permissions, limits","Layer 5 · Writing the verdict"];
+const LAYERS=["layer 0 · what is this app","layer 1 · category and its usual pattern","layer 2 · your intent and audience","layer 3 · checking the verified library","layer 4 · gauging access, review, permissions, limits","layer 5 · stamping the verdict"];
 let ctl=null;
 function agentPrompt(q,i,a){return `You are Clearance, an agent that tells a developer how hard it is to get their own OAuth app ready with a provider, so their AI agent's users can connect.
 App the developer typed: "${q}"
@@ -410,31 +538,33 @@ Honesty rules, these matter most:
 Return ONLY this JSON, no prose around it:
 {"name":"","category":"","overview":"1-2 sentences","oauth":"yes|no|unclear","tier":"green|amber|red","work":"e.g. 30 to 60 min","wait":"e.g. None / About 2 weeks / Not published","why":"1-2 sentences","gauges":[{"key":"G1 Access","value":"","ev":"U","note":""},{"key":"G2 Review","value":"","ev":"U","note":""},{"key":"G3 Permissions","value":"","ev":"U","note":""},{"key":"G4 You need","value":"","ev":"U","note":""},{"key":"G5 Before approval","value":"","ev":"U","note":""},{"key":"G6 Ongoing","value":"","ev":"U","note":""}],"blockers":[{"text":"","ev":"U"}],"steps":[{"who":"agent|you","text":"","ev":"U"}],"wait_tip":"","unknowns":[""],"sources":[{"t":"","u":""}],"portal":"developer portal URL or empty"}`}
 
+
+
 async function live(q){const i=getIntent(),a=getAud();const out=$('#out');
   let sample=null;try{sample=await claude.use("sample")}catch(e){}
-  if(!sample){out.innerHTML=`<div class="panel notice">Live generation runs inside Claude, on the viewer's own Claude account. Open this page at its claude.ai link while signed in to use it. The verified library above works everywhere.</div>`;return}
-  let step=0;const draw=(extra)=>{out.innerHTML=`<div class="panel"><div class="label" style="margin-bottom:10px">Generating clearance for "${esc(q)}" · ${INT_W[i]} · ${AUD_W[a]}</div><div class="progress">${LAYERS.map((l,n)=>`<span class="${n<=step?'on':'off'}">${n<step?'✓':n===step?'<span class="blink">▸</span>':'·'} ${l}</span>`).join('')}</div><p class="hint">${extra||'The agent can take up to a minute. It uses your Claude access; you may be asked to allow it.'}</p><button class="ghost" type="button" id="stop">Stop</button></div>`;$('#stop').onclick=()=>ctl?.abort()};
+  if(!sample){out.innerHTML=`<div class="panel"><div class="kicker" style="color:var(--coral)">live mode offline</div><p style="margin:10px 0 0">Live mode runs inside Claude, on your own Claude account. Open this page at its claude.ai link while signed in, or pick a verified app above. They work everywhere.</p></div>`;return}
+  let step=0;const draw=x=>{out.innerHTML=`<div class="panel"><div class="kicker">$ clearance check ${esc(q)} --does ${i} --for ${a==='team'?'my-team':'public'}</div><div class="layers">${LAYERS.map((l,n)=>`<span class="${n<step?'ok':n===step?'on':'off'}">${n<step?'✓':n===step?'<span class="blink">▸</span>':'·'} ${l}</span>`).join('')}</div><p style="color:var(--faint);font-family:var(--f-mono);font-size:12.5px;margin:16px 0 12px">${x||'reading docs so you don\'t have to · up to a minute · you may be asked to allow Claude'}</p><button class="btn" type="button" id="stop">stop</button></div>`;$('#stop').onclick=()=>ctl?.abort()};
   draw();const timer=setInterval(()=>{if(step<LAYERS.length-1){step++;draw()}},6000);
   ctl=new AbortController();$('#go').disabled=true;
-  try{const res=await sample(agentPrompt(q,i,a),{signal:ctl.signal,modelTier:"default",onText:({text})=>{step=Math.max(step,LAYERS.length-1);draw(`Writing the report… ${text.length} characters`)}});
+  try{const res=await sample(agentPrompt(q,i,a),{signal:ctl.signal,modelTier:"default",onText:({text})=>{step=LAYERS.length-1;draw(`writing the report · ${text.length} chars`)}});
     clearInterval(timer);const m=res.text.match(/\{[\s\S]*\}/);if(!m)throw{code:"parse"};const r=JSON.parse(m[0]);
     r.tier=['green','amber','red'].includes(r.tier)?r.tier:'amber';
     r.sources=(r.sources||[]).filter(s=>s&&/^https:\/\//.test(s.u)).map(s=>({...s,opened:false}));
-    (r.steps||[]).forEach(s=>s.ev='U');(r.gauges||[]).forEach(x=>x.ev='U');(r.blockers||[]).forEach(b=>b.ev='U');
+    ['steps','gauges','blockers'].forEach(k=>(r[k]||[]).forEach(x=>{x.ev='U';delete x.src}));
     if(r.portal&&!/^https:\/\//.test(r.portal))r.portal='';
     r.managed={v:"Check the directory",ev:"U",src:"cmpdir"};
-    out.innerHTML=`<div class="notice" style="margin-bottom:10px">Generated live from the model's knowledge, without browsing. Treat every line as unverified until you check the sources.</div>`+report(r,{i,a,badge:"Generated live",share:false,foot:"Layer 3: not in the verified library · generated "+new Date().toUTCString().slice(5,22)+" UTC"});
+    out.innerHTML=`<div class="banner">Generated live from Claude's knowledge, without browsing. Treat every line as unverified until you've checked the sources.</div>`+report(r,{i,a,badge:"generated live",share:false,foot:"not in the verified library · generated "+new Date().toUTCString().slice(5,22)+" UTC"});
     wireCopy(()=>textOf(r,i,a));
   }catch(e){clearInterval(timer);const code=e&&e.code;
-    const msg={cancelled:"Stopped.",not_granted:"Live generation needs your OK to use Claude. Reload and allow it to try again.",rate_limited:"Too many requests just now. Wait a minute and try again.",parse:"The agent's answer didn't come back in the expected format. Try again."}[code]||"Live generation failed. Try again, or pick a verified app above.";
-    out.innerHTML=`<div class="panel notice">${msg}</div>`}
+    const msg={cancelled:"Stopped. The tower is standing by.",not_granted:"Live mode needs your OK to use Claude. Reload and allow it to try again.",rate_limited:"Too many checks at once. Give it a minute.",parse:"The agent's answer came back in the wrong shape. Run it again."}[code]||"Live check failed. Run it again, or pick a verified app above.";
+    out.innerHTML=`<div class="panel"><p style="margin:0">${msg}</p></div>`}
   finally{$('#go').disabled=false}}
 
 $('#req').addEventListener('submit',e=>{e.preventDefault();const q=$('#app').value.trim();if(!q){$('#app').focus();return}
   const id=findLib(q);if(id)showLib(id);else{history.replaceState(null,'',location.pathname+location.search);board();live(q)}});
-document.querySelectorAll('input[name=intent],input[name=aud]').forEach(r=>r.addEventListener('change',()=>{const cur=(location.hash||'').slice(1).split('-')[0];board();if(LIB.find(x=>x.id===cur))showLib(cur,false)}));
+document.querySelectorAll('input[name=intent],input[name=aud]').forEach(r=>r.addEventListener('change',()=>{const cur=(location.hash||'').slice(1).split('-')[0];board();if(LIB.find(x=>x.id===cur))showLib(cur,false,true)}));
 function fromHash(){const [id,i,a]=(location.hash||'').slice(1).split('-');if(i&&document.getElementById('i-'+i))document.getElementById('i-'+i).checked=true;if(a&&document.getElementById('a-'+a))document.getElementById('a-'+a).checked=true;
-  if(LIB.find(x=>x.id===id))showLib(id,true);else showLib('gmail',true)}
+  if(LIB.find(x=>x.id===id))showLib(id,true);else{board();showLib('gmail',true)}}
 window.addEventListener('hashchange',fromHash);
-board();fromHash();
+fromHash();
 </script>
