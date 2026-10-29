@@ -303,7 +303,7 @@ const LIB=[
      g("G4 You need","A LinkedIn Company Page linked to the app","U","Third-party guides say a Page admin must verify the link."),
      g("G5 Before approval","150 posts/day per member","S","Application limit 100,000 a day.","lishare"),
      g("G6 Ongoing","None known","U")],
-    blockers:[{text:"Reading a member's connections, feed or company data is not in the open products.",ev:"S",src:"li"},{text:"No Company Page or admin to approve the link means no app.",ev:"U"}],
+    blockers:[{text:"Nothing works before you register: our agent's test with an unregistered client ID got \"The passed in client_id is invalid\".",ev:"T"},{text:"Reading a member's connections, feed or company data is not in the open products.",ev:"S",src:"li"},{text:"No Company Page or admin to approve the link means no app.",ev:"U"}],
     steps:[{who:"you",text:"Create the app and pick your Company Page.",ev:"U"},{who:"you",text:"Ask your Page admin to approve the verification link.",ev:"U"},
      {who:"you",text:"Add Sign in with LinkedIn and Share on LinkedIn on the Products tab.",ev:"S",src:"li"},COMPOSIO_STEP],
     wait_tip:"No wait, beyond the Page admin approving."}
@@ -322,7 +322,7 @@ const LIB=[
     gauges:[g("G1 Access","Open to create","S","","no"),g("G2 Review","Required for public connections","S","The authorization URL appears only after submission.","no"),
      g("G3 Permissions","Capabilities you select","U"),g("G4 You need","Redirect URI, likely privacy policy, terms and support email","U","Official page lists only the redirect URI; third-party guides add the rest."),
      g("G5 Before approval","Can't onboard public users","S","No authorization URL yet.","no"),g("G6 Ongoing","Install scope can't change later","S","Choose any workspace vs a specific set carefully.","no")],
-    blockers:[{text:"The install scope (any workspace or a chosen set) is fixed at creation.",ev:"S",src:"no"},{text:"Review time is unknown. We could not verify it.",ev:"U"}],
+    blockers:[{text:"The install scope (any workspace or a chosen set) is fixed at creation.",ev:"S",src:"no"},{text:"A wrong client ID isn't rejected up front: our agent's test request went straight to Notion's install page. Test the full flow with a real user before launch.",ev:"T"},{text:"Review time is unknown. We could not verify it.",ev:"U"}],
     steps:[{who:"agent",text:"Prepare the form: name, redirect URI, privacy policy and terms links.",ev:"U"},
      {who:"you",text:"Create the public connection and submit it for review.",ev:"S",src:"no"},
      {who:"you",text:"Copy the Client ID and secret once approved.",ev:"U"},COMPOSIO_STEP],
