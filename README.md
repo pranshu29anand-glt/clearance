@@ -21,6 +21,7 @@ Built as a take-home for Composio's APM Integrations role.
 | `evidence/verification-log.md` | Every claim in the library: sourced, tested, corrected, or unverified. |
 | `evidence/live-test-log.md` | Apps used to test live generation, and what to look for. |
 | `docs/PRD.md` | Short copy of the PRD, so this repo stands alone. |
+| `scripts/check-guides.mjs` | Validates the guide data: every claim has an evidence label, every Sourced claim points to a real source, every intent and audience combination resolves to a verdict. Runs in CI on every push. |
 
 ## Setup
 
@@ -29,6 +30,22 @@ There's nothing to install and no API key.
 1. **Use it:** open the live app link. The verified library works for anyone with the link.
 2. **Live generation:** type an app that isn't in the library (for example Razorpay, Zoom or HubSpot) and click "Check clearance". It runs on the viewer's own Claude account through the Claude artifact runtime, so you must be signed in to Claude and allow the request when asked.
 3. **Run locally:** open `index.html` in a browser. The library works. Live mode shows a notice, because it needs the Claude runtime.
+4. **Check the data:** `node scripts/check-guides.mjs` (Node 18+, no dependencies).
+
+## How the code is laid out
+
+`index.html` is one self-contained file, because it's hosted as a Claude artifact with no build step. Inside the `<script>`:
+
+| Block | What it does |
+| --- | --- |
+| `SRC` | Every official source we opened, keyed by short id. |
+| `LIB` | The 5 guides. Each app has `paths`, and each path has a `when` condition (`intent`, `aud`). `resolve()` picks the first path that matches the developer's choices, so the verdict changes with intent and audience. |
+| `report()` | Renders one verdict: stamp, time bar, steps (agent or you), blockers, and receipts (gauges and sources). |
+| `agentPrompt()` and `live()` | Live mode. It sends the layered prompt through the artifact runtime's `sample` call, parses the JSON, then enforces honesty in code (see `agent/live-agent.md`). |
+| `radar()`, `board()` | The hero radar and the ticket cards, both recomputed from `resolve()`. |
+| `EPS`, `openHyper()` | The "What's next" roadmap and its hyperspace sequence: a canvas starfield, a CSS 3D crawl, and staggered card animations. It respects `prefers-reduced-motion`. |
+
+To add an app, add one `LIB` entry with its sources in `SRC` and run the check script.
 
 ## Key decisions
 

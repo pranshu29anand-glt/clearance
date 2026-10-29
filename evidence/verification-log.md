@@ -84,5 +84,5 @@ Creating a real OAuth app needs a logged-in browser session on every provider, a
 | Tally | Count |
 | --- | --- |
 | Corrected | 1 |
-| Tested | 5 (no-login probes) |
+| Tested | 4 no-login probes (Google, LinkedIn, Notion, Slack); GitHub blocked by our network |
 | Open unknowns | 8 |
